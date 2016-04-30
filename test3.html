@@ -9,38 +9,42 @@
 	<link href="css/bootstrap.min.css" rel="stylesheet">
 	<!-- CSS du menu-->
 	<link href="menu.css" rel="stylesheet">
+    <!-- CSS du main-part-->
+	<link href="main_part.css" rel="stylesheet">
+    <!-- CSS du carousel-->
+	<link href="carousel.css" rel="stylesheet">
+    <!-- CSS du footer-->
+	<link href="footer.css" rel="stylesheet">
+    <!-- CSS du shar-btn-->
+	<link href="social-share.css" rel="stylesheet">
     
     <!-- social -->
-    <link href="//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="font-awesome-4.6.1/css/font-awesome.min.css">
 
 	<!-- JAVASCIPT -->
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
 	<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
-	<script type="text/javascript">$(document).ready(function(){
-    $(".dropdown").hover(            
-        function() {
-            $('.dropdown-menu', this).not('.in .dropdown-menu').stop(true,true).slideDown("400");
-            $(this).toggleClass('open');        
-        },
-        function() {
-            $('.dropdown-menu', this).not('.in .dropdown-menu').stop(true,true).slideUp("400");
-            $(this).toggleClass('open');       
-        }
-    );});
-    </script>
+	<!-- JAVASCIPT Menu -->
+    <script src="menu.js"></script>
+    <!-- JAVASCIPT carousel -->
+    <script src="carousel.js"></script>
     
 </head>
 <body>
     
-  
+  <!--****************************************************************************************************************************
+                                                  NAVBAR
+ *******************************************************************************************************************************-->    
 <div id="header" class="container-fluid">
     <div class="row">
-        <div class="col-lg-10">
+        <div class="col-lg-6">
         <h1><a href="http://www.google.com"> Bêêêtclic </a></h1>
         <h3> Site de paris en ligne !</h3>
         </div>
-         <div class="col-lg-2">
-        <img src="http://a395.idata.over-blog.com/4/19/11/95/23/mdg-3214-7853--2-.gif" alt="Mouton con" >
+        <!-- disapear if the widh is not enought  large --> 
+        <div class="visible-lg-inline">
+        <img src="http://www.qafco.qa/tennis/images/teng1.png" alt="Mouton con" >
+        <img src="http://img.over-blog-kiwi.com/300x300/0/18/66/82/20150125/ob_c7cedf_logo.png" alt="Mouton con" width="150px" > 
         </div>
     </div>
 </div>
@@ -48,8 +52,10 @@
     
     
     
-<!--  Navbar -->    
-<nav class="navbar navbar-inverse" data-spy="affix" data-offset-top="197">
+<!--****************************************************************************************************************************
+                                                  NAVBAR
+ *******************************************************************************************************************************-->    
+<nav class="navbar navbar-inverse " data-spy="affix" data-offset-top="197">
   	<div class="navbar-header">
 		<button class="navbar-toggle" type="button" data-toggle="collapse" data-target=".js-navbar-collapse" >
 			<span class="sr-only">Toggle navigation</span>
@@ -57,12 +63,17 @@
 			<span class="icon-bar"></span>
 			<span class="icon-bar"></span>
 		</button>
+        <!--  HOME BUTTON  -->
 		<a class="navbar-brand" href="#"><i class="glyphicon glyphicon-home"></i></a>
 	</div>
 	
+    
 	<div class="collapse navbar-collapse js-navbar-collapse">
-		<ul class="nav navbar-nav">
-			<!-- FOOTBALL -->
+		<!--   SPORT : SOCCER & TENNIS  -->
+        <ul class="nav navbar-nav">
+            
+
+			<!-- SOCCER -->
 			<li class="dropdown mega-dropdown">
 				<a href="#" class="dropdown-toggle" data-toggle="dropdown"> FOOTBALL <span class="caret"></span></a>				
 				<ul style="display: none;" class="dropdown-menu mega-dropdown-menu">
@@ -93,6 +104,7 @@
 				</ul>				
 			</li>
 			
+            
 			<!-- TENNIS -->
 			<li class="dropdown mega-dropdown">
 				<a href="#" class="dropdown-toggle" data-toggle="dropdown"> TENNIS <span class="caret"></span></a>				
@@ -131,11 +143,15 @@
 				</ul>				
 			</li>
 		</ul>
+        
+        
 		<!--Profile  or Login & Register-->
 		<ul class="nav navbar-nav navbar-right">
-			<li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown">Account
-				<b class="caret"></b></a>
-				<ul class="dropdown-menu">
+            
+            <!-- PROFILE -->
+			<li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown">Account<b class="caret"></b></a>
+				<ul class="dropdown-menu account-background">
 					<li>
 						<div class="navbar-content">
 							<div class="row">
@@ -170,119 +186,249 @@
 					</li>
 				</ul>
 			</li>
-            <!-- Login btn -->
-            <a  class="btn btn-primary btn-lg" href="#" data-toggle="modal" data-target="#login-modal">Login</a>
             
-             <!-- login modal -->
-            <div class="modal fade" id="login-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
-                <div class="modal-dialog">
-				    <div class="loginmodal-container">
-                        <h1>Login to Your Account</h1><br>
-                        <form>
-                           <input type="text" name="user" placeholder="Username">
-                           <input type="password" name="pass" placeholder="Password">
-                           <input type="submit" name="login" class="login loginmodal-submit" value="Login">
-                        </form>
-
-                        <div class="login-help">
-                           <a href="#">Register</a> - <a href="#">Forgot Password</a>
-                        </div>
-				    </div>
-			     </div>
-            </div>
+            <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown"><b>Login</b> <span class="caret"></span></a>
+			<ul id="login-dp" class="dropdown-menu">
+				<li>
+					 <div class="row">
+							<div class="col-md-12">
+								Login via
+								<div class="social-buttons">
+									<a href="#" class="btn btn-fb"><i class="fa fa-facebook"></i> Facebook</a>
+									<a href="#" class="btn btn-tw"><i class="fa fa-twitter"></i> Twitter</a>
+								</div>
+                                or
+								 <form class="form" role="form" method="post" action="login" accept-charset="UTF-8" id="login-nav">
+										<div class="form-group">
+											 <label class="sr-only" for="exampleInputEmail2">Email address</label>
+											 <input type="email" class="form-control" id="exampleInputEmail2" placeholder="Email address" required>
+										</div>
+										<div class="form-group">
+											 <label class="sr-only" for="exampleInputPassword2">Password</label>
+											 <input type="password" class="form-control" id="exampleInputPassword2" placeholder="Password" required>
+                                             <div class="help-block text-right"><a href="">Forget the password ?</a></div>
+										</div>
+										<div class="form-group">
+											 <button type="submit" class="btn btn-primary btn-block">Sign in</button>
+										</div>
+										<div class="checkbox">
+											 <label>
+											 <input type="checkbox"> keep me logged-in
+											 </label>
+										</div>
+								 </form>
+							</div>
+							<div class="bottom text-center">
+								New here ? <a href="#"><b>Join Us</b></a>
+							</div>
+					 </div>
+				</li>
+			</ul>
+        </li>
             
-        <!--  -->          
-            <a  class="btn btn-primary btn-lg" href="#" >Register</a>
             
-        
+            <!-- REGISTER BUTTON -->          
+            <li><a href="#" >Register</a></li>
+            
         </ul>
-	</div>
-    
-
-	
+	</div>	
 </nav>
+<!--****************************************************************************************************************************
+                                                  NAVBAR END
+ *******************************************************************************************************************************-->  
 
-<div class="container-fluid" style="height:1000px">
-  <h1>Some text to enable scrolling</h1>
-  <h1>Some text to enable scrolling</h1>
-  <h1>Some text to enable scrolling</h1>
-  <h1>Some text to enable scrolling</h1>
-  <h1>Some text to enable scrolling</h1>
-  <h1>Some text to enable scrolling</h1>
-  <h1>Some text to enable scrolling</h1>
-  <h1>Some text to enable scrolling</h1>
-  <h1>Some text to enable scrolling</h1>
-  <h1>Some text to enable scrolling</h1>
-  <h1>Some text to enable scrolling</h1>
-</div>
-    
-    
+<!--****************************************************************************************************************************
+                                                  CONTAINER
+ *******************************************************************************************************************************-->   
 
-<link href="//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
-<div class="container">
-	<div class="row mobile-social-share">
-    		<div class="col-md-9">
-                <h3>Share this content</h3>
-            </div>
-            <div id="socialHolder" class="col-md-3">
-        		<div id="socialShare" class="btn-group share-group">
-                    <a data-toggle="dropdown" class="btn btn-info">
-                         <i class="fa fa-share-alt fa-inverse"></i>
-                    </a>
-    				<button href="#" data-toggle="dropdown" class="btn btn-info dropdown-toggle share">
-    					<span class="caret"></span>
-    				</button>
-    				<ul class="dropdown-menu">
-        				<li>
-    					    <a data-original-title="Twitter" rel="tooltip"  href="#" class="btn btn-twitter" data-placement="left">
-								<i class="fa fa-twitter"></i>
-							</a>
-    					</li>
-    					<li>
-    						<a data-original-title="Facebook" rel="tooltip"  href="#" class="btn btn-facebook" data-placement="left">
-								<i class="fa fa-facebook"></i>
-							</a>
-    					</li>					
-    					<li>
-    						<a data-original-title="Google+" rel="tooltip"  href="#" class="btn btn-google" data-placement="left">
-								<i class="fa fa-google-plus"></i>
-							</a>
-    					</li>
-    				    <li>
-    						<a data-original-title="LinkedIn" rel="tooltip"  href="#" class="btn btn-linkedin" data-placement="left">
-								<i class="fa fa-linkedin"></i>
-							</a>
-    					</li>
-    					<li>
-    						<a data-original-title="Pinterest" rel="tooltip"  class="btn btn-pinterest" data-placement="left">
-								<i class="fa fa-pinterest"></i>
-							</a>
-    					</li>
-                        <li>
-    						<a  data-original-title="Email" rel="tooltip" class="btn btn-mail" data-placement="left">
-								<i class="fa fa-envelope"></i>
-							</a>
-    					</li>
+ <div id="main_part" class="container">   
+     <div class="row">
+         <div class=" col-lg-8 left-part">
+            <!--******************************************************************
+                                   CAROUSEL
+             ********************************************************************-->   
+            <div id="carousel">
+                <h2> Evenements à venir ! Préparez vous !</h2>
+                
+                <div id="carousel1" class="carousel slide" data-ride="carousel">
+                    <div class="carousel-inner">
+                        <div class="item active">
+                            <img alt="goal" src="http://www.lesaviezvous.net/wp-content/uploads/2016/01/but-record-football.jpg">
+                            <div class="carousel-caption">
+                                <h3> Match 1</h3>
+                                <a href="#"> PARIEZ !</a>
+                            </div>
+                        </div>
+                        <div class="item">
+                            <img alt="goal" src="http://www.lesaviezvous.net/wp-content/uploads/2016/01/but-record-football.jpg">
+                            <div class="carousel-caption">
+                               <h3> Match 2</h3>
+                                <a href="#"> PARIEZ !</a>
+                            </div>
+                        </div>
+                        <div class="item">
+                            <img alt="goal" src="http://www.lesaviezvous.net/wp-content/uploads/2016/01/but-record-football.jpg">
+                            <div class="carousel-caption">
+                                <h3> Match 3</h3>
+                                <a href="#"> PARIEZ !</a>
+                            </div>
+                        </div>
+                    </div>
+                    <ul class="nav nav-pills nav-justified">
+                        <li data-target="#carousel1" data-slide-to="0"  class="active">
+                            <a href="#">About<small>Lorem ipsum dolor sit</small></a>
+                        </li>
+                        <li data-target="#carousel1" data-slide-to="1">
+                            <a href="#">Projects<small>Lorem ipsum dolor sit</small></a>
+                        </li>
+                        <li data-target="#carousel1" data-slide-to="2">
+                            <a href="#">Portfolio<small>Lorem ipsum dolor sit</small></a>
+                        </li>
                     </ul>
-    			</div>
+                </div>
+            </div>
+    <!--******************************************************************
+                           CAROUSEL END
+     ********************************************************************--> 
+
+            <div class="container-fluid" style="height:1000px">
+              <h1>Some text to enable scrolling</h1>
+              <h1>Some text to enable scrolling</h1>
+              <h1>Some text to enable scrolling</h1>
+              <h1>Some text to enable scrolling</h1>
+              <h1>Some text to enable scrolling</h1>
+              <h1>Some text to enable scrolling</h1>
+              <h1>Some text to enable scrolling</h1>
+              <h1>Some text to enable scrolling</h1>
+              <h1>Some text to enable scrolling</h1>
+              <h1>Some text to enable scrolling</h1>
+              <h1>Some text to enable scrolling</h1>
+            </div>
+         </div>
+         
+        <div class="col-lg-4">
+             <div class="slidebar">  
+                 
+    <!--******************************************************************
+                           Social
+     ********************************************************************--> 
+
+                
+                <ul class="social-network social-circle">
+
+                        <li><a href="#" class="icoGoogle" title="Google +"><i class="fa fa-google-plus"></i></a></li>
+                        <li><a href="#" class="icoFacebook" title="Facebook"><i class="fa fa-facebook"></i></a></li>
+                        <li><a href="#" class="icoTwitter" title="Twitter"><i class="fa fa-twitter"></i></a></li>
+                        <li><a href="#" class="icoEnvelope" title="envelope"><i class="fa fa-envelope"></i></a></li>
+                </ul>				
+
+
+
+              <h1>Some text to enable scrolling</h1>
+              <h1>Some text to enable scrolling</h1>
+              <h1>Some text to enable scrolling</h1>
+              <h1>Some text to enable scrolling</h1>
+              <h1>Some text to enable scrolling</h1>
+              <h1>Some text to enable scrolling</h1>
+              <h1>Some text to enable scrolling</h1>
+              <h1>Some text to enable scrolling</h1>
+              <h1>Some text to enable scrolling</h1>
+              <h1>Some text to enable scrolling</h1>
+              <h1>Some text to enable scrolling</h1>
             </div>
         </div>
+     </div>
 </div>
-
+<!--****************************************************************************************************************************
+                                                CONTAINER END
+ *******************************************************************************************************************************-->   
     
-<div class="container-fluid" style="height:1000px">
-  <h1>Some text to enable scrolling</h1>
-  <h1>Some text to enable scrolling</h1>
-  <h1>Some text to enable scrolling</h1>
-  <h1>Some text to enable scrolling</h1>
-  <h1>Some text to enable scrolling</h1>
-  <h1>Some text to enable scrolling</h1>
-  <h1>Some text to enable scrolling</h1>
-  <h1>Some text to enable scrolling</h1>
-  <h1>Some text to enable scrolling</h1>
-  <h1>Some text to enable scrolling</h1>
-  <h1>Some text to enable scrolling</h1>
-</div>
+    
+    
+    
+<!--****************************************************************************************************************************
+                                                FOOTER
+ *******************************************************************************************************************************-->       
+<link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
 
+    <footer>
+    <div class="footer" id="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-2  col-md-2 col-sm-4 col-xs-6">
+                    <h3> Lorem Ipsum </h3>
+                    <ul>
+                        <li> <a href="#"> Lorem Ipsum </a> </li>
+                        <li> <a href="#"> Lorem Ipsum </a> </li>
+                        <li> <a href="#"> Lorem Ipsum </a> </li>
+                        <li> <a href="#"> Lorem Ipsum </a> </li>
+                    </ul>
+                </div>
+                <div class="col-lg-2  col-md-2 col-sm-4 col-xs-6">
+                    <h3> Lorem Ipsum </h3>
+                    <ul>
+                        <li> <a href="#"> Lorem Ipsum </a> </li>
+                        <li> <a href="#"> Lorem Ipsum </a> </li>
+                        <li> <a href="#"> Lorem Ipsum </a> </li>
+                        <li> <a href="#"> Lorem Ipsum </a> </li>
+                    </ul>
+                </div>
+                <div class="col-lg-2  col-md-2 col-sm-4 col-xs-6">
+                    <h3> Lorem Ipsum </h3>
+                    <ul>
+                        <li> <a href="#"> Lorem Ipsum </a> </li>
+                        <li> <a href="#"> Lorem Ipsum </a> </li>
+                        <li> <a href="#"> Lorem Ipsum </a> </li>
+                        <li> <a href="#"> Lorem Ipsum </a> </li>
+                    </ul>
+                </div>
+                <div class="col-lg-2  col-md-2 col-sm-4 col-xs-6">
+                    <h3> Lorem Ipsum </h3>
+                    <ul>
+                        <li> <a href="#"> Lorem Ipsum </a> </li>
+                        <li> <a href="#"> Lorem Ipsum </a> </li>
+                        <li> <a href="#"> Lorem Ipsum </a> </li>
+                        <li> <a href="#"> Lorem Ipsum </a> </li>
+                    </ul>
+                </div>
+                <div class="col-lg-3  col-md-3 col-sm-6 col-xs-12 ">
+                    <h3> Lorem Ipsum </h3>
+                    <ul>
+                        <li>
+                            <div class="input-append newsletter-box text-center">
+                                <input type="text" class="full text-center" placeholder="Email ">
+                                <button class="btn  bg-gray" type="button"> Lorem ipsum <i class="fa fa-long-arrow-right"> </i> </button>
+                            </div>
+                        </li>
+                    </ul>
+                    <ul class="social">
+                        <li> <a href="#"> <i class=" fa fa-facebook">   </i> </a> </li>
+                        <li> <a href="#"> <i class="fa fa-twitter">   </i> </a> </li>
+                        <li> <a href="#"> <i class="fa fa-google-plus">   </i> </a> </li>
+                    </ul>
+                </div>
+            </div>
+            <!--/.row--> 
+        </div>
+        <!--/.container--> 
+    </div>
+    <!--/.footer-->
+    
+    <div class="footer-bottom">
+        <div class="container">
+            <p class="pull-left"> Copyright © Footer E-commerce Plugin 2014. All right reserved. </p>
+            <div class="pull-right">
+                <ul class="nav nav-pills payments">
+                	<li><i class="fa fa-cc-visa"></i></li>
+                    <li><i class="fa fa-cc-mastercard"></i></li>
+                    <li><i class="fa fa-cc-amex"></i></li>
+                    <li><i class="fa fa-cc-paypal"></i></li>
+                </ul> 
+            </div>
+        </div>
+    </div>
+    <!--/.footer-bottom--> 
+</footer>
 </body>
 </html>

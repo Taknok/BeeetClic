@@ -1,0 +1,31 @@
+/*************************************************************************
+                        CSS : Main part (HOME,SOCCER,TENNIS)
+**************************************************************************/
+body{
+    background-image: url(Image/green.jpg);
+    
+}
+
+#main_part{
+    margin-top: 34px;
+    padding: 0;
+ 
+}
+.left-part{
+    padding: 0;
+    border:1px solid black;
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 15px 15px 20px black;
+}
+
+.slidebar{
+    margin-left: 10px;
+    border-radius: 10px;
+    border:1px solid black;
+    background-color:white;
+    box-shadow: 15px 15px 20px black;
+    
+    padding: 12px 8px;
+    
+}
