@@ -1,0 +1,220 @@
+/*************************************************************************
+                        CSS : Header and Navbar
+**************************************************************************/
+
+/* fonts (we used fontsquirrel.com)*/
+@font-face {
+    font-family: 'quadrantabold';
+    src: url('fonts/quadranta-bold/quadranta-bold-webfont.eot');
+    src: url('fonts/quadranta-bold/quadranta-bold-webfont.eot?#iefix') format('embedded-opentype'),
+         url('fonts/quadranta-bold/quadranta-bold-webfont.woff2') format('woff2'),
+         url('fonts/quadranta-bold/quadranta-bold-webfont.woff') format('woff'),
+         url('fonts/quadranta-bold/quadranta-bold-webfont.otf') format('truetype'),
+         url('fonts/quadranta-bold/quadranta-bold-webfont.svg#quadrantabold') format('svg');
+    font-weight: normal;
+    font-style: normal;
+
+}
+@font-face {
+    font-family: 'escafinahigh';
+    src: url('fonts/escafina-high/escafina-high.otf-webfont.eot');
+    src: url('fonts/escafina-high/escafina-high.otf-webfont.eot?#iefix') format('embedded-opentype'),
+         url('fonts/escafina-high/escafina-high.otf-webfont.woff2') format('woff2'),
+         url('fonts/escafina-high/escafina-high.otf-webfont.woff') format('woff'),
+         url('fonts/escafina-high/escafina-high.otf-webfont.otf') format('truetype'),
+         url('fonts/escafina-high/escafina-high.otf-webfont.svg#escafinahigh') format('svg');
+    font-weight: normal;
+    font-style: normal;
+
+}
+
+/* that come from a template */
+
+.navbar{
+    border-radius:0px;
+    margin: 0px;
+    z-index: 999;
+}
+.dropdown:hover, .dropdown .over:hover{
+    background-color:red;
+}
+
+/* MEGAMENU */
+.mega-dropdown {
+  position: static !important;
+}
+.mega-dropdown-menu {
+	padding: 0px 0px;
+	width: 100%;
+	box-shadow: none;
+	-webkit-box-shadow: none;
+}
+.mega-dropdown-menu > li > ul {
+  padding: 0;
+  margin: 0;
+}
+.mega-dropdown-menu > li > ul > li {
+  list-style: none;
+}
+.mega-dropdown-menu > li > ul > li > a {
+  display: block;
+  color: #222;
+  padding: 3px 5px;
+}
+.mega-dropdown-menu > li ul > li > a:hover,
+.mega-dropdown-menu > li ul > li > a:focus {
+  text-decoration: none;
+}
+.mega-dropdown-menu .dropdown-header {
+  font-size: 18px;
+  color: #ff3546;
+  padding: 0px 60px 5px 0px;
+  line-height: 20px;
+}
+
+
+/* ACCOUNT*/
+
+.navbar-wrapper {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 20;
+  margin-top: 1000px;
+}
+.navbar-wrapper .container {
+  padding-left: 0;
+  padding-right: 0;
+}
+.navbar-wrapper .navbar {
+  padding-left: 15px;
+  padding-right: 15px;
+}
+
+.navbar-content
+{
+    width:320px;
+    padding: 15px;
+    padding-bottom:0px;
+    
+}
+.navbar-content:before, .navbar-content:after
+{
+    display: table;
+    content: "";
+    line-height: 0;
+}
+.navbar-nav.navbar-right:last-child {
+margin-right: 15px !important;
+}
+.navbar-footer 
+{
+    background-color:#DDD;
+}
+.navbar-footer-content { padding:15px 15px 15px 15px; }
+.dropdown-menu {
+padding: 0px;
+overflow: hidden;
+}
+
+
+
+
+/* end of the template*/
+
+
+/* Held the navbar in top  */
+  .affix,affix-top{
+      top: 0;
+      width: 100%;
+  }
+  .affix + .container-fluid {
+      padding-top: 70px;
+}
+
+
+
+/* Header */
+#header{
+    font-family: quadrantabold;
+    text-decoration: none;
+    color:#fff;
+    height:200px;
+    display: block;
+    
+}
+
+#header h1{
+    font-family: escafinahigh;
+    font-size: 110px;
+    padding: 0px;
+    margin: 40px 0px 0px 10%;
+}
+#header a{
+    color:#fff;
+}
+#header h3{
+    font-family: quadrantabold;
+    font-size: 30px;
+    padding: 0px;
+    margin: 0px 0px 0px 20%;
+}
+
+
+/*  */
+@import url(http://fonts.googleapis.com/css?family=Roboto);
+
+/****** LOGIN MODAL ******/
+
+#login-dp{
+    min-width: 250px;
+    padding: 14px 14px 0;
+    overflow:hidden;
+
+}
+#login-dp .help-block{
+    font-size:12px    
+}
+#login-dp .bottom{
+   
+    border-top:1px solid #ddd;
+    clear:both;
+    padding:14px;
+}
+#login-dp .social-buttons{
+    margin:12px 0    
+}
+#login-dp .social-buttons a{
+    width: 49%;
+}
+#login-dp .form-group {
+    margin-bottom: 10px;
+}
+.btn-fb{
+    color: #fff;
+    background-color:#3b5998;
+}
+.btn-fb:hover{
+    color: #fff;
+    background-color:#496ebc 
+}
+.btn-tw{
+    color: #fff;
+    background-color:#55acee;
+}
+.btn-tw:hover{
+    color: #fff;
+    background-color:#59b5fa;
+}
+@media(max-width:768px){
+    #login-dp{
+        background-color: inherit;
+        color: #fff;
+    }
+    #login-dp .bottom{
+        background-color: inherit;
+        border-top:0 none;
+    }
+}
+
