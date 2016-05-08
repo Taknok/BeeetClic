@@ -83,8 +83,88 @@ function coteEq1($id){
 
 }
 
+function preventXSS($array){
+    foreach ($array as $cle => $element){
+        $array[$cle] = htmlspecialchars(strip_tags($element));
+    }
+    return $array;
+}
 
+function initErrorInputMessage(){
+    $error_input["not-all-completed"] = 0;
+    $error_input["pseudo"] = 0;
+    $error_input["nom"] = 0;
+    $error_input["prenom"] = 0;
+    $error_input["mail"] = 0;
+    $error_input["pwd"] = 0;
+    $error_input["age-checkboxes"] = 0;
+    $error_input["agreement-checkboxes"] = 0;
+    $error_input["argent"] = 0;
+    $error_input["error-detected"] = 0;
+}
 
+function errorInput($array){
+    $error_input = initErrorInputMessage();
+    
+    $fields = ["pseudo", "nom", "prenom", "mail", "confirm-mail", "pwd", "confirm-pwd", "age-checkboxes", "agreement-checkboxes", "argent"];
+    
+    foreach($fields as $element) {
+        if(!isset($_POST[$element]) || empty($_POST[$element])) {
+            $error_input["not-all-completed"] = 1;
+            $error_input["error-detected"] = 1;
+        }
+    }
+    
+    
+    
+    foreach ($array as $cle => $element){
+        switch($cle){
+            case "pseudo":
+            case "nom":
+            case "prenom":
+                if (!ctype_alnum($element)){ //if not only A-Z a-z 0-9
+                    $error_input[$cle] = 1;
+                    $error_input["error-detected"] = 1;
+                }
+                break;
+            case "mail":
+                //check if mail exist here
+                if ($array["mail"] != $array["confirm-mail"]){
+                    $error_input["mail"] = 1;
+                    $error_input["error-detected"] = 1;
+                }
+                break;
+            case "pwd":
+                // check qu'il fait au moins x case avec mak min etc
+                if ($array["pwd"] != $array["confirm-pwd"]){
+                    $error_input["pwd"] = 1;
+                    $error_input["error-detected"] = 1;
+                }
+                break;
+            case "age-checkboxes":
+                if ($element != 1){
+                    $error_input[$cle] = 1;
+                    $error_input["error-detected"] = 1;
+                }
+                break;
+            case "agreement-checkboxes":
+                if ($element != 1){
+                    $error_input[$cle] = 1;
+                    $error_input["error-detected"] = 1;
+                }
+                break;
+            case "argent":
+                if ($element < 0){
+                    $error_input["argent"] = 1;
+                    $error_input["error-detected"] = 1;
+                }
+                break;
+            default:
+                break;
+        }
+    }
+    return $error_input;
+}
 
 
 

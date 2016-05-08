@@ -4,7 +4,7 @@
 ?>
 
 <!DOCTYPE html>
-<html lang="fr">
+<html>
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
@@ -12,19 +12,22 @@
 	
 	<!-- CSS  BOOTSTAP-->
 	<link href="css/bootstrap.min.css" rel="stylesheet">
-	<!-- CSS du menu-->
+	<!-- CSS menu-->
 	<link href="css/menu.css" rel="stylesheet">
-    <!-- CSS du main-part-->
+    <!-- CSS main-part-->
 	<link href="css/main_part.css" rel="stylesheet">
-    <!-- CSS du carousel-->
+    <!-- CSS carousel-->
 	<link href="css/carousel.css" rel="stylesheet">
-    <!-- CSS du footer-->
+    <!-- CSS footer-->
 	<link href="css/footer.css" rel="stylesheet">
-    <!-- CSS du shar-btn-->
+    <!-- CSS shar-btn-->
 	<link href="css/social-share.css" rel="stylesheet">
-    
-    <!-- social -->
-    <link  href="css/font-awesome.min.css" rel="stylesheet">
+    <!-- CSS home-page-->
+	<link href="css/home-page.css" rel="stylesheet">
+    <!-- CSS organisation-->
+	<link href="css/organisation.css" rel="stylesheet">
+    <!-- icon -->
+    <link href="css/font-awesome-4.6.1/css/font-awesome.min.css" rel="stylesheet">
 
 	<!-- JAVASCIPT -->
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
@@ -36,3 +39,4 @@
     
 </head>
 <body>
+  

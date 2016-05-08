@@ -9,4 +9,5 @@ $GLOBALS['dbName'] = 'Site';
 $GLOBALS['blogTitle'] = 'Bloggy';
 $GLOBALS['blogPass'] = 'secret';
 
+
 ?>

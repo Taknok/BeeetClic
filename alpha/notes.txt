@@ -1,0 +1,16 @@
+FAIT:
+
+
+ENCOURS:
+
+
+TO DO:
+- faire la fonction preventSqlInjection
+- check que l'image envoyé est bien une image et pas un fichier exécutable php ou autre
+- check si email existe
+-check que le mot de passe fait au moin sx caracs avec maj min
+
+PLUS TARTD:
+
+
+
