@@ -4,6 +4,7 @@
 #carousel{
     width: 90%;
     margin: auto;
+    margin-bottom: 50px;
 }
 body {
     padding-top: 20px;
@@ -18,11 +19,11 @@ body {
     border-radius: 0px;
 }
 .nav-pills > li[data-slide-to="0"].active a {
-    background-color: #b4d9a7;
+    background-color: dimgray;
 }
 .nav-pills > li[data-slide-to="1"].active a {
-    background-color: #4f77cb;
+    background-color: dimgray;
 }
 .nav-pills > li[data-slide-to="2"].active a {
-    background-color: #d11e4f;
+    background-color: dimgray;
 }
