@@ -5,27 +5,49 @@ session_start();
 include("php/fonctions.php");
 include("php/config.php");
 
+function displayError($error, $cle){
+    if (isset($error[$cle]) && $error[$cle]){
+        echo "class='form-control form-error input-md' value='" . $_POST[$cle] . "'";
+    } else if (isset($error["error-detected"])){
+        echo "class='form-control input-md' value='" . $_POST[$cle] . "'"; 
+    } else {
+        echo "class='form-control input-md'"; 
+    }
+}
+
+
+
+
+$error = initErrorInputMessage();
+$array =[];
+
+
+
+
+
 print_r($_SESSION);
 echo "<br/>";
 
 print_r($_POST);
+echo "<br />";
+
 
 if (isset($_POST["submit-inscription"])){
     
     $array = preventXSS($_POST);
     
     $error = errorInput($array);
+    print_r($error);
     
     //check ici si ya deja un des entrées existante
     
     if (!$error["error-detected"]){
-        $inscription_success = ajoutCompte($_POST["pseudo"], $_POST["nom"], $_POST["prenom"], $_POST["mail"], $_POST["pwd"], $_POST["argent"]);
+        $inscription_success = ajoutCompte($array["pseudo"], $array["nom"], $array["prenom"], $array["mail"], $array["pwd"], $array["argent"]);
     }
     
     print_r($_SESSION);
     //header("Refresh:0");
 }
-$inscription_success = 1;
 
 ?>
 
@@ -55,6 +77,17 @@ if(isset($inscription_success) && $inscription_success){
 ?>
 
 
+<style>
+    .form-error{
+        border-color: red;
+    }
+    .form-error:focus{
+        border-color:red;
+        box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.075) inset, 0px 0px 8px rgba(102, 10, 10, 0.6);
+    }
+
+</style>
+
 
 
  <form class="form-horizontal" method="post" name="inscription", action="inscription.php">
@@ -63,11 +96,21 @@ if(isset($inscription_success) && $inscription_success){
     <!-- Form Name -->
     <legend class="text-center"> Inscrivez vous et jouez ! </legend>
 
+    <?php
+    displayErrorMessage($error);
+    ?>
+        
     <!-- Text input-->
     <div class="form-group">
-        <label class="col-md-4 control-label" for="pseudo">Pseudo</label>  
+        <label class="col-md-4 control-label" for="pseudo"><span style=".form-control:focus">  Pseudo</span></label>  
         <div class="col-md-5">
-        <input id="pseudo" name="pseudo" placeholder="" class="form-control input-md" required="" type="text">
+        <input id="pseudo" name="pseudo" placeholder="" 
+               
+               <?php
+                displayError($error, "pseudo");
+               ?>
+               
+            required type="text">
         <span class="help-block">(espace et charatères speciaux non autorisés) </span>  
         </div>
     </div>
@@ -76,7 +119,13 @@ if(isset($inscription_success) && $inscription_success){
     <div class="form-group">
         <label class="col-md-4 control-label" for="nom">Nom</label>  
         <div class="col-md-5">
-        <input id="nom" name="nom" placeholder="" class="form-control input-md" required="" type="text">
+        <input id="nom" name="nom" placeholder="" 
+               
+               <?php
+                displayError($error, "nom");
+               ?>
+               
+               required="" type="text">
 
         </div>
     </div>
@@ -85,7 +134,13 @@ if(isset($inscription_success) && $inscription_success){
     <div class="form-group">
         <label class="col-md-4 control-label" for="prenom">Prénom</label>  
         <div class="col-md-5">
-        <input id="prenom" name="prenom" placeholder="" class="form-control input-md" required="" type="text">
+        <input id="prenom" name="prenom" placeholder="" 
+               
+               <?php
+                displayError($error, "prenom");
+               ?>
+               
+               required="" type="text">
 
     </div>
     </div>
@@ -94,7 +149,13 @@ if(isset($inscription_success) && $inscription_success){
     <div class="form-group">
         <label class="col-md-4 control-label" for="mail">E-mail</label>
         <div class="col-md-5">
-        <input id="mail" name="mail" placeholder="votre-email@quelquechose.quelquechose" class="form-control input-md" required="" type="email">
+        <input id="mail" name="mail" placeholder="votre-email@quelquechose.quelquechose" 
+               
+               <?php
+                displayError($error, "mail");
+               ?>
+               
+               required="" type="email">
         <span class="help-block">(un message vous sera envoyer pour confirmer votre compte)</span>  
         </div>
     </div>
@@ -103,7 +164,13 @@ if(isset($inscription_success) && $inscription_success){
     <div class="form-group">
         <label class="col-md-4 control-label" for="confirm-mail">Confirmez votre E-mail</label>  
         <div class="col-md-5">
-        <input id="confirm-mail" name="confirm-mail" placeholder="" class="form-control input-md" required="" type="email">
+        <input id="confirm-mail" name="confirm-mail" placeholder="" 
+               
+               <?php
+                displayError($error, "confirm-mail");
+               ?>
+               
+               required="" type="email">
 
     </div>
     </div>
@@ -112,7 +179,13 @@ if(isset($inscription_success) && $inscription_success){
     <div class="form-group">
         <label class="col-md-4 control-label" for="passwordinput">Mot de passe</label>
         <div class="col-md-5">
-        <input id="passwordinput" name="pwd" placeholder="" class="form-control input-md" required="" type="password">
+        <input id="passwordinput" name="pwd" placeholder="" 
+               
+               <?php
+                displayError($error, "pwd");
+               ?>
+               
+            required type="password">
         <span class="help-block">8 characteres obligatoires</span>
     </div>
     </div>
@@ -121,7 +194,13 @@ if(isset($inscription_success) && $inscription_success){
     <div class="form-group">
         <label class="col-md-4 control-label" for="confirm-passwordinput">Confirmez votre mot de passe</label>
         <div class="col-md-5">
-        <input id="confirm-passwordinput" name="confirm-pwd" placeholder="" class="form-control input-md" required="" type="password">
+        <input id="confirm-passwordinput" name="confirm-pwd" placeholder="" 
+               
+               <?php
+                displayError($error, "confirm-pwd");
+               ?>
+               
+               required="" type="password">
 
         </div>
     </div>
@@ -130,7 +209,13 @@ if(isset($inscription_success) && $inscription_success){
     <div class="form-group">
         <label class="col-md-4 control-label" for="money">Argent</label>
         <div class="col-md-5">
-        <input id="money" name="argent" placeholder="" class="form-control input-md" required="" type="number">
+        <input id="money" name="argent" placeholder="" 
+               
+               <?php
+                displayError($error, "argent");
+               ?>
+               
+               required="" type="number">
 
         </div>
     </div>

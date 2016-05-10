@@ -9,7 +9,7 @@
 <!--****************************************************************************************************************************
                                                   NAVBAR
  *******************************************************************************************************************************-->    
-<<nav class="navbar navbar-inverse " data-spy="affix" data-offset-top="197">
+<nav class="navbar navbar-inverse " data-spy="affix" data-offset-top="197">
   	<div class="navbar-header">
 		<button class="navbar-toggle" type="button" data-toggle="collapse" data-target=".js-navbar-collapse" >
 			<span class="sr-only">Toggle navigation</span>
@@ -21,7 +21,7 @@
         
         
         <!--  HOME BUTTON  -->
-		<a class="navbar-brand" href="HOME.html"><i class="glyphicon glyphicon-home"></i></a>
+		<a class="navbar-brand" href="home.php"><i class="glyphicon glyphicon-home"></i></a>
 	</div>
 	
 	<div class="collapse navbar-collapse js-navbar-collapse">
@@ -48,7 +48,7 @@
             
             <!-- PROFILE -->
 			<li class="dropdown">
-                <a href="PROFILE.html" class="dropdown-toggle" data-toggle="dropdown"> Profile <b class="caret"></b></a>
+                <a href="profile.php" class="dropdown-toggle" data-toggle="dropdown"> Profile <b class="caret"></b></a>
 				<ul class="dropdown-menu account-background">
 					<li>
 						<div class="navbar-content">
@@ -94,7 +94,7 @@
             
             <!--Login-->
             <li class="dropdown">
-                <a href="#" class="dropdown-toggle" data-toggle="dropdown">Login<span class="caret"></span></a>
+                <a href="inscription.php" class="dropdown-toggle" data-toggle="dropdown">Login<span class="caret" ></span></a>
                 <ul id="login-dp" class="dropdown-menu">
                     <li>
                          <div class="row">
@@ -105,7 +105,7 @@
                                         <a href="#" class="btn btn-tw"><i class="fa fa-twitter"></i> Twitter</a>
                                     </div>
                                     or
-                                     <form class="form" role="form" method="post" action="php/connection.php" accept-charset="UTF-8" id="login-nav">
+                                     <form class="form" role="form" method="post" action="connection.php" accept-charset="UTF-8" id="login-nav">
                                             <div class="form-group">
                                                  <label class="sr-only" for="exampleInputEmail2">Email</label>
                                                  <input type="text" class="form-control" id="exampleInputEmail2" name="login" placeholder="Email address" autocomplete="off" required>
