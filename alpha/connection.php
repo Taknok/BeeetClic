@@ -3,12 +3,16 @@ session_start();
 
 print_r($_POST);
 
-include("fonctions.php");
-include("config.php");
+include("php/fonctions.php");
+include("php/config.php");
 
 if (isset($_POST['login']) && isset($_POST['pwd'])){
     if (auth($_POST['login'], $_POST['pwd'])){
-        $message = "bien venue";
+        if (isset($_SESSION["from_home"])){
+            header("Location:home.php");
+        } else {
+            header("Location:profil.php");
+        }
     } else {
         $message = "erreur lors de la connaction";
     }

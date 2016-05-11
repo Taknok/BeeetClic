@@ -48,7 +48,7 @@
             
             <!-- PROFILE -->
 			<li class="dropdown">
-                <a href="profile.php" class="dropdown-toggle" data-toggle="dropdown"> Profile <b class="caret"></b></a>
+                <a href="profile.php" class="dropdown-toggle disabled" data-toggle="dropdown"> Profile <b class="caret"></b></a>
 				<ul class="dropdown-menu account-background">
 					<li>
 						<div class="navbar-content">
@@ -94,7 +94,7 @@
             
             <!--Login-->
             <li class="dropdown">
-                <a href="inscription.php" class="dropdown-toggle" data-toggle="dropdown">Login<span class="caret" ></span></a>
+                <a href="connection.php" class="dropdown-toggle disabled" data-toggle="dropdown">Login<span class="caret" ></span></a>
                 <ul id="login-dp" class="dropdown-menu">
                     <li>
                          <div class="row">

@@ -30,10 +30,6 @@ function auth($login, $motDePass) {
         $_SESSION["connecte"] = true;
         $_SESSION["id"] = $assoc["id"];
         $_SESSION["pseudo"] = $assoc["pseudo"];
-        $_SESSION["nom"] = $assoc["nom"];
-        $_SESSION["prenom"] = $assoc["prenom"];
-        $_SESSION["motDePass"] = $assoc["motDePass"];
-        $_SESSION["argent"] = $assoc["argent"];
         return true;
         
     } else { //else
@@ -45,6 +41,58 @@ function auth($login, $motDePass) {
     mysqli_close($connexion);
 }
 
+function getArgent($id){
+    $connexion = connect2DB();
+    
+    $stmt = mysqli_prepare($connexion, "SELECT Argent FROM Compte WHERE id=? ;");
+    mysqli_stmt_bind_param($stmt, 'i',$id);
+    mysqli_stmt_execute($stmt);
+    $request = mysqli_stmt_get_result($stmt);
+    $assoc = mysqli_fetch_assoc($request);
+    
+    mysqli_close($connexion);
+    return $assoc['argent'];
+
+}
+
+function getNom($id){
+    $connexion = connect2DB();
+    
+    $stmt = mysqli_prepare($connexion, "SELECT Nom FROM Compte WHERE id=? ;");
+    mysqli_stmt_bind_param($stmt, 'i',$id);
+    mysqli_stmt_execute($stmt);
+    $request = mysqli_stmt_get_result($stmt);
+    $assoc = mysqli_fetch_assoc($request);
+    
+    mysqli_close($connexion);
+    return $assoc['nom'];
+}
+
+function getPrenom($id){
+    $connexion = connect2DB();
+    
+    $stmt = mysqli_prepare($connexion, "SELECT Prenom FROM Compte WHERE id=? ;");
+    mysqli_stmt_bind_param($stmt, 'i',$id);
+    mysqli_stmt_execute($stmt);
+    $request = mysqli_stmt_get_result($stmt);
+    $assoc = mysqli_fetch_assoc($request);
+    
+    mysqli_close($connexion);
+    return $assoc['prenom'];
+}
+
+function getEmail($id){
+    $connexion = connect2DB();
+    
+    $stmt = mysqli_prepare($connexion, "SELECT Email FROM Compte WHERE id=? ;");
+    mysqli_stmt_bind_param($stmt, 'i',$id);
+    mysqli_stmt_execute($stmt);
+    $request = mysqli_stmt_get_result($stmt);
+    $assoc = mysqli_fetch_assoc($request);
+    
+    mysqli_close($connexion);
+    return $assoc['email'];
+}
 
 function ajoutCompte($pseudo, $nom, $prenom, $email, $motDePass, $argent){
     //tester que les variables sont bien les tring ou int
