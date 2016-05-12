@@ -1,4 +1,5 @@
 <?php
+$GLOBALS['addrServ']="http://localhost/alpha/";
 
 $GLOBALS['dbServ'] = 'localhost';
 $GLOBALS['dbUser'] = 'root';

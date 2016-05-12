@@ -3,6 +3,17 @@
 include("config.php");
 
 
+function debug($var){
+    echo "<pre>" .print_r($var, true) . "</pre>"; 
+}
+
+function mySessionStart(){
+    if (session_status() == PHP_SESSION_NONE){
+        session_start();
+    }
+}
+
+
 function checkConnect(){
     if (isset($_SESSION["connecte"]) && $_SESSION["connecte"]){
         return true;
@@ -24,7 +35,9 @@ function auth($login, $motDePass) {
     mysqli_stmt_bind_param($stmt, 'ss',$login, hash('sha512', $motDePass));
     mysqli_stmt_execute($stmt);
     $request = mysqli_stmt_get_result($stmt);
-        
+    
+    mysqli_close($connexion);
+    
     if (mysqli_num_rows($request) != 0) { //if login success
         $assoc = mysqli_fetch_assoc($request);
         $_SESSION["connecte"] = true;
@@ -37,14 +50,13 @@ function auth($login, $motDePass) {
         return false;
 
     }
-    mysqli_free_result($request);
-    mysqli_close($connexion);
+    
 }
 
 function getArgent($id){
     $connexion = connect2DB();
     
-    $stmt = mysqli_prepare($connexion, "SELECT Argent FROM Compte WHERE id=? ;");
+    $stmt = mysqli_prepare($connexion, "SELECT argent FROM Compte WHERE id=? ;");
     mysqli_stmt_bind_param($stmt, 'i',$id);
     mysqli_stmt_execute($stmt);
     $request = mysqli_stmt_get_result($stmt);
@@ -58,9 +70,9 @@ function getArgent($id){
 function getNom($id){
     $connexion = connect2DB();
     
-    $stmt = mysqli_prepare($connexion, "SELECT Nom FROM Compte WHERE id=? ;");
-    mysqli_stmt_bind_param($stmt, 'i',$id);
-    mysqli_stmt_execute($stmt);
+    $stmt = mysqli_prepare($connexion, "SELECT nom FROM Compte WHERE id = ? ;");
+    mysqli_stmt_bind_param($stmt, 'i', $id);
+    $test = mysqli_stmt_execute($stmt);
     $request = mysqli_stmt_get_result($stmt);
     $assoc = mysqli_fetch_assoc($request);
     
@@ -71,7 +83,7 @@ function getNom($id){
 function getPrenom($id){
     $connexion = connect2DB();
     
-    $stmt = mysqli_prepare($connexion, "SELECT Prenom FROM Compte WHERE id=? ;");
+    $stmt = mysqli_prepare($connexion, "SELECT prenom FROM Compte WHERE id=? ;");
     mysqli_stmt_bind_param($stmt, 'i',$id);
     mysqli_stmt_execute($stmt);
     $request = mysqli_stmt_get_result($stmt);
@@ -84,7 +96,7 @@ function getPrenom($id){
 function getEmail($id){
     $connexion = connect2DB();
     
-    $stmt = mysqli_prepare($connexion, "SELECT Email FROM Compte WHERE id=? ;");
+    $stmt = mysqli_prepare($connexion, "SELECT email FROM Compte WHERE id=? ;");
     mysqli_stmt_bind_param($stmt, 'i',$id);
     mysqli_stmt_execute($stmt);
     $request = mysqli_stmt_get_result($stmt);
@@ -94,15 +106,38 @@ function getEmail($id){
     return $assoc['email'];
 }
 
-function ajoutCompte($pseudo, $nom, $prenom, $email, $motDePass, $argent){
+function getValid_mail($pseudo){
+    $connexion = connect2DB();
+    
+    $stmt = mysqli_prepare($connexion, "SELECT validation_mail FROM Compte WHERE pseudo=? ;");
+    mysqli_stmt_bind_param($stmt, 's',$pseudo);
+    mysqli_stmt_execute($stmt);
+    $request = mysqli_stmt_get_result($stmt);
+    $assoc = mysqli_fetch_assoc($request);
+    
+    mysqli_close($connexion);
+    return $assoc['validation_mail'];
+}
+
+function setValid_mail($pseudo){
+    $connexion = connect2DB();
+    echo $pseudo;
+    $stmt = mysqli_prepare($connexion, "UPDATE Compte SET validation_mail = NULL, validation_date = NOW() WHERE pseudo = ?");
+    mysqli_stmt_bind_param($stmt, 's', $pseudo);
+    $test = mysqli_stmt_execute($stmt);    
+    mysqli_close($connexion);
+    echo $test;
+}
+
+function ajoutCompte($pseudo, $nom, $prenom, $email, $motDePass, $argent, $valid_mail){
     //tester que les variables sont bien les tring ou int
 
     $argent = (int) $argent;
         
     
     $connexion = connect2DB();
-    $stmt = mysqli_prepare($connexion, "INSERT INTO Compte (pseudo, nom, prenom, email, motDePass, argent) VALUES (?, ?, ?, ?, ?, ?)");
-    mysqli_stmt_bind_param($stmt, 'sssssi',$pseudo, $nom, $prenom, $email, hash('sha512', $motDePass), $argent);
+    $stmt = mysqli_prepare($connexion, "INSERT INTO Compte (pseudo, nom, prenom, email, motDePass, argent, validation_mail) VALUES (?, ?, ?, ?, ?, ?, ?)");
+    mysqli_stmt_bind_param($stmt, 'sssssis',$pseudo, $nom, $prenom, $email, hash('sha512', $motDePass), $argent, $valid_mail);
     $success = mysqli_stmt_execute($stmt);
     mysqli_close($connexion);
     
@@ -128,7 +163,26 @@ function avaiblePseudo($pseudo){
     
     mysqli_close($connexion);
     
-    if (empty(assoc)){
+    if (empty($assoc)){
+        return true;
+    } else {
+        return false;
+    }
+    
+}
+
+function avaibleMail($mail){
+    $connexion = connect2DB();
+    $stmt = mysqli_prepare($connexion, "SELECT id FROM Compte WHERE email = ?");
+    mysqli_stmt_bind_param($stmt, 's',$mail);
+    mysqli_stmt_execute($stmt);
+    
+    $request = mysqli_stmt_get_result($stmt);
+    $assoc = mysqli_fetch_assoc($request);
+    
+    mysqli_close($connexion);
+    
+    if (empty($assoc)){
         return true;
     } else {
         return false;
@@ -180,17 +234,14 @@ function errorOnMail($error, $array){
         $error["mail"] = "mail nom complété";
         $error["error-detected"] = 1;
     }
-    else if (filter_var($array["mail"], FILTER_VALIDATE_EMAIL)){
+
+    if (!filter_var($array["mail"], FILTER_VALIDATE_EMAIL) === true){
         $error["mail"] = "mail non valide";
         $error["error-detected"] = 1;
     }
     
     if ( empty($array["confirm-mail"])){
         $error["confirm-mail"] = "confirmation mail non complété";
-        $error["error-detected"] = 1;
-    }
-    else if (filter_var($array["confirm-mail"], FILTER_VALIDATE_EMAIL)){
-        $error["mail"] = "mail de confirmation  non valide";
         $error["error-detected"] = 1;
     } else if ($array["mail"] != $array["confirm-mail"]){
         $error["confirm-mail"] = "Le mail de confirmation ne correspond pas";
@@ -236,12 +287,24 @@ function errorInput($array){
     
     $error_input = errorOnText($error_input, $array, "pseudo");
     
+    if (!avaiblePseudo($array["pseudo"])){
+        $error_input["pseudo"] = "pseudo deja pris";
+        $error_input["error-detected"] = 1;
+    }
+    
+    
     $error_input = errorOnText($error_input, $array, "nom");
     
     $error_input = errorOnText($error_input, $array, "prenom");
     
     
     $error_input = errorOnMail($error_input, $array);
+    
+    if (!avaibleMail($array["mail"])){
+        $error_input["mail"] = "ce mail est deja utilisé par un autre compte";
+        $error_input["error-detected"] = 1;
+    }
+       
     
     $error_input = errorOnPwd($error_input, $array);
                 
@@ -272,7 +335,7 @@ function errorInput($array){
 
 function displayErrorMessage($error){
     if (isset($error["error-detected"]) && $error["error-detected"]){
-        $message = "<p>";
+        $message = "<div class='alert alert-danger'> Erreur(s) : <ul>";
         foreach ($error as $cle => $element){
                 switch ($cle){
                     case "pseudo":
@@ -285,19 +348,29 @@ function displayErrorMessage($error){
                     case "argent":
                     case "agreement-checkboxes":
                     case "age-checkboxes":
-                        $message = $message . $element . "<br />";
+                        $message = $message . "<li>" . $element . "</li>";
                         break;
                     default:
                         break;
             }
         }
-    $message = $message . "</p>";
+    $message = $message . "</ul></div>";
     echo $message;
     }
 }
 
 
-
+function generatedValidationEmail($len){
+    $string = "";
+    $chaine = "abcdefghijklmnpqrstuvwxy";
+    srand((double)microtime()*1000000);
+    
+    for($i=0; $i<$len; $i++) {
+        $string .= $chaine[rand()%strlen($chaine)];
+    }
+    
+    return $string;
+}
 
 
 

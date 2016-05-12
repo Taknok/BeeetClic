@@ -15,7 +15,7 @@ function displayError($error, $cle){
     }
 }
 
-
+debug($_SESSION);
 
 
 $error = initErrorInputMessage();
@@ -25,11 +25,8 @@ $array =[];
 
 
 
-print_r($_SESSION);
+debug($_POST);
 echo "<br/>";
-
-print_r($_POST);
-echo "<br />";
 
 
 if (isset($_POST["submit-inscription"])){
@@ -37,16 +34,30 @@ if (isset($_POST["submit-inscription"])){
     $array = preventXSS($_POST);
     
     $error = errorInput($array);
-    print_r($error);
+    debug($error);
     
     //check ici si ya deja un des entrées existante
     
     if (!$error["error-detected"]){
-        $inscription_success = ajoutCompte($array["pseudo"], $array["nom"], $array["prenom"], $array["mail"], $array["pwd"], $array["argent"]);
+        $valid_mail = generatedValidationEmail(255);
+        
+        $send_mail_succes = mail($array["mail"], "Validation de votre compte BeeetClic", "Cliquez sur le lien pour valider votre compte :\n" . $GLOBALS["addrServ"] . "valid_compte.php?pseudo=" . $array["pseudo"] . "&valid_mail=" . $valid_mail . "\nVeuillez ignorer cette email si vous ne vous etes pas inscrit sur BeeetClic" );
+        
+        debug($send_mail_succes);
+        
+        if (!$send_mail_succes){
+            $error["error-detected"] = 1;
+            $error["mail"]  ="Erreur lors de l'envoie du mail de confirmation à l'adresse indiquée";
+        } else {
+            $inscription_success = ajoutCompte($array["pseudo"], $array["nom"], $array["prenom"], $array["mail"], $array["pwd"], $array["argent"], $valid_mail);
+            
+            $_SESSION["flash"]["success"] = "Un mail de validtion vous a été envoyé";
+            
+            header("Location:home.php");
+        }
+        
     }
     
-    print_r($_SESSION);
-    //header("Refresh:0");
 }
 
 ?>
@@ -55,24 +66,6 @@ if (isset($_POST["submit-inscription"])){
 <?php
 
     include("php/begin.php");
-
-?>
-
-
-
-
-<?php
-
-if(isset($inscription_success) && $inscription_success){
-
-?>
-
-<p> inscription reussi ! checkez votre boie mail</p>
-
-
-<?php
-
-} else {
 
 ?>
 
@@ -206,17 +199,32 @@ if(isset($inscription_success) && $inscription_success){
     </div>
         
     <!-- Money money-->
+<!--<label class="col-md-4 control-label" for="euros"></label>
+              <div class="col-md-5">
+                <div class="input-group">
+                  <span class="input-group-addon">€</span>
+                  <input id="euros" name="euros" class="form-control" placeholder="" required="" type="number">
+                </div>
+                <p class="help-block">max 100€</p>
+              </div>
+      </div>-->
+        
+        
+        
     <div class="form-group">
-        <label class="col-md-4 control-label" for="money">Argent</label>
+        <label class="col-md-4 control-label" for="euros">Argent</label>
         <div class="col-md-5">
-        <input id="money" name="argent" placeholder="" 
-               
-               <?php
-                displayError($error, "argent");
-               ?>
-               
-               required="" type="number">
+            <div class="input-group">
+            <span class="input-group-addon">€</span>
+            <input id="money" name="argent" placeholder="" 
 
+                   <?php
+                    displayError($error, "argent");
+                   ?>
+
+                   required="" type="number">
+
+            </div>
         </div>
     </div>
 
@@ -262,19 +270,6 @@ if(isset($inscription_success) && $inscription_success){
 
     </fieldset>
 </form>
-
-
-
-
-
-<?php
-    if (isset($inscription_success) && !$inscription_success){
-        echo "<p> Erreur</p>";
-    }
-    
-}
-
-?>
 
 
 <?php

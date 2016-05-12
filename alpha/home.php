@@ -5,8 +5,6 @@
     print_r($_SESSION);
     include("php/fonctions.php");
 
-    $_SESSION["from_home"] = 1;
-
     include("php/begin.php");
     include("php/home/carousel.php");
     echo "<hr>";

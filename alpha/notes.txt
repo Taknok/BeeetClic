@@ -14,3 +14,29 @@ PLUS TARTD:
 
 
 
+Installation:
+postfix doit etre installé sur l'ordi : sudo apt-get install postfix
+
+
+
+compte gmail:
+beeetclic@gmail.com
+clicbeee
+
+
+sudo apt-get install ssmtp
+
+
+/etc/ssmtp/ssmtp.conf 
+
+mailhub=smtp.gmail.com:587
+UseSTARTTLS=YES
+FromLineOverride=YES
+AuthUser=login_gmail
+AuthPass=password_gmail
+
+
+et /etc/ssmtp/revaliases
+
+root:username@gmail.com:smtp.gmail.com:587
+[user]:username@gmail.com:smtp.gmail.com:587

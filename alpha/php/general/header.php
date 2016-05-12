@@ -1,6 +1,6 @@
 <?php
 
-
+mySessionStart();
 
 ?>
 
@@ -27,4 +27,3 @@
         </div>
     </div>
 </div>
-    
