@@ -45,13 +45,13 @@ if (isset($_POST["submit-inscription"])){
         
         debug($send_mail_succes);
         
-        if (!$send_mail_succes){
+        /*if (!$send_mail_succes){
             $error["error-detected"] = 1;
             $error["mail"]  ="Erreur lors de l'envoie du mail de confirmation à l'adresse indiquée";
-        } else {
+        } else {*/
             $inscription_success = ajoutCompte($array["pseudo"], $array["nom"], $array["prenom"], $array["mail"], $array["pwd"], $array["argent"], $valid_mail);
-            
-            $_SESSION["flash"]["success"] = "Un mail de validtion vous a été envoyé";
+        
+            $_SESSION["flash"]["success"] = "Un mail de validation vous a été envoyé";
             
             header("Location:home.php");
         }

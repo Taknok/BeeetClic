@@ -12,6 +12,65 @@ $prenom = getPrenom($id);
 $pseudo = $_SESSION["pseudo"];
 $mail = getEmail($id);
 
+$error = initErrorInputMessage();
+
+
+/*
+Modify prenom and nom
+*/
+if (isset($_POST["submit_name"])){
+    $array=preventXSS($_POST);
+    
+    $error = errorOnText($error, $array, "nom");
+    $error = errorOnText($error, $array, "prenom");
+    
+    if (checkPwd($pseudo,$array["pwd"])){
+        $connexion = connect2DB();
+    
+        $stmt = mysqli_prepare($connexion, "UPDATE Compte SET prenom = ?, nom = ? WHERE pseudo = ?");
+        mysqli_stmt_bind_param($stmt, 'sss', $array["nom"], $array["prenom"], $pseudo);
+        $success =mysqli_stmt_execute($stmt);
+        
+        if (!$success){
+            $_SESSION["flash"]["danger"] = "Nom et prénom non modifiés";
+        } else {
+            $_SESSION["flash"]["success"] = "Nom et prénom modifiés";
+        }
+    } else {
+        $_SESSION["flash"]["danger"] = "Nom et prénom non modifiés";
+    }
+}
+
+
+
+if (isset($_POST["submit_mail"])){
+    $array=preventXSS($_POST);
+    
+    $error = errorOnMail($error, $array);
+    
+    if (!avaibleMail($array["mail"])){
+        $error["mail"] = "ce mail est deja utilisé par un autre compte";
+        $error["error-detected"] = 1;
+    }
+    
+    if (checkPwd($pseudo,$array["pwd"]) && !$error["error-detected"]){
+        $connexion = connect2DB();
+    
+        $stmt = mysqli_prepare($connexion, "UPDATE Compte SET mail = ? WHERE pseudo = ?");
+        mysqli_stmt_bind_param($stmt, 'ss', $array["mail"], $pseudo);
+        $success = mysqli_stmt_execute($stmt);
+        
+        if (!$success){
+            $_SESSION["flash"]["danger"] = "Mail non modifié";
+        } else {
+            $_SESSION["flash"]["success"] = "Mail modifié";
+        }
+    } else {
+        $_SESSION["flash"]["danger"] = "Nom et prénom non modifiés";
+    }
+}
+
+
 
 
 include("php/begin.php");
@@ -20,11 +79,11 @@ include("php/begin.php");
 
 
 
-
+        <div style="padding:10px;">
             
             <!-- PROFILE-->
             <section id="profile">
-                <h2 class='text-center'> Profile :</h2>
+                <h2 class='text-center'> Profil :</h2>
                 <div class="row">
                     <div class="col-sm-offset-2 col-sm-2 col-md-2">
                         <img class="img-circle" width="120" src="http://thetransformedmale.files.wordpress.com/2011/06/bruce-wayne-armani.jpg"
@@ -44,10 +103,14 @@ include("php/begin.php");
            
             <hr>
             
+            <?php displayErrorMessage($error); ?>
+
+
             <!-- CHANGE INFO-->
             <section id="change-info">
                 <h2 class='text-center'> Modifier mon profile :</h2>
-                <form class="form-horizontal">
+                
+                <form class="form-horizontal" method="post" action="profil.php">
                 <fieldset>
 
 
@@ -68,6 +131,37 @@ include("php/begin.php");
 
                   </div>
                 </div>
+                
+                     <div class="form-group">
+                  <label class="col-md-4 control-label" for="passwordinput">Mot de passe</label>
+                  <div class="col-md-5">
+                    <input id="passwordinput" name="pwd" placeholder="" class="form-control input-md" required="" type="password">
+                    <span class="help-block">8 characteres obligatoires</span>
+                  </div>
+                </div>
+                    
+                      <!-- Button -->
+                <div class="form-group">
+                  <label class="col-md-4 control-label" for="singlebutton"> </label>
+                  <div class="col-md-4">
+                    <button id="info_singlebutton" name="submit_name" class="btn btn-info">Confirmer</button>
+                  </div>
+                </div>
+
+                </fieldset>
+             </form>  
+            </section>
+
+
+            <hr>
+
+            <!--MODIFY EMAIL-->
+            <section id="change-mail">
+                <h2 class='text-center'> Modifier email :</h2>
+                <form class="form-horizontal" method="post" action="profil.php">
+                <fieldset>
+
+            
 
                 <!-- Text input-->
                 <div class="form-group">
@@ -91,7 +185,7 @@ include("php/begin.php");
                 <div class="form-group">
                   <label class="col-md-4 control-label" for="passwordinput">Mot de passe</label>
                   <div class="col-md-5">
-                    <input id="passwordinput" name="passwordinput" placeholder="" class="form-control input-md" required="" type="password">
+                    <input id="passwordinput" name="pwd" placeholder="" class="form-control input-md" required="" type="password">
                     <span class="help-block">8 characteres obligatoires</span>
                   </div>
                 </div>
@@ -100,7 +194,7 @@ include("php/begin.php");
                 <div class="form-group">
                   <label class="col-md-4 control-label" for="singlebutton"> </label>
                   <div class="col-md-4">
-                    <button id="info_singlebutton" name="info_singlebutton" class="btn btn-info">Confirmer</button>
+                    <button id="info_singlebutton" name="submit_mail" class="btn btn-info">Confirmer</button>
                   </div>
                 </div>
 
@@ -111,11 +205,10 @@ include("php/begin.php");
             
             <hr>
             
-            
             <!-- CHANGE PWD-->
             <section id="change-pwd">
                 <h2 class='text-center'> Changer de mot de passe :</h2>
-                <form class="form-horizontal">
+                <form class="form-horizontal" method="post" action="profil.php">
              <fieldset>
                 <!-- Password input-->
                 <div class="form-group">
@@ -159,7 +252,7 @@ include("php/begin.php");
             <!-- RELOAD ACCOUNT-->
             <section id="reload_account" class="bootstrap-iso">
             <h2 class='text-center'> Crêêêditer compte :</h2>   
-           <form class="form-horizontal">
+           <form class="form-horizontal" method="post" action="profil.php">
             <fieldset>
 
             <!-- Prepended text-->
@@ -186,7 +279,7 @@ include("php/begin.php");
 
             </section>
             
-            
+        </div>
                                         
 <?php
 

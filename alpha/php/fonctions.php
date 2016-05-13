@@ -32,7 +32,10 @@ function auth($login, $motDePass) {
     $connexion = connect2DB();
     
     $stmt = mysqli_prepare($connexion, "SELECT * FROM Compte WHERE pseudo=? AND motDePass=? ;");
-    mysqli_stmt_bind_param($stmt, 'ss',$login, hash('sha512', $motDePass));
+    
+    $hashed = hash('sha512', $motDePass);
+    
+    mysqli_stmt_bind_param($stmt, 'ss',$login, $hashed );
     mysqli_stmt_execute($stmt);
     $request = mysqli_stmt_get_result($stmt);
     
@@ -47,6 +50,27 @@ function auth($login, $motDePass) {
         
     } else { //else
         $_SESSION["connecte"] = false;
+        return false;
+
+    }
+    
+}
+
+function checkPwd($pseudo, $pwd){
+    $connexion = connect2DB();
+    
+    $stmt = mysqli_prepare($connexion, "SELECT id FROM Compte WHERE pseudo=? AND motDePass=? ;");
+    
+    $hashed = hash('sha512', $pwd);
+    
+    mysqli_stmt_bind_param($stmt, 'ss',$pseudo, $hashed );
+    mysqli_stmt_execute($stmt);
+    $request = mysqli_stmt_get_result($stmt);
+    
+    mysqli_close($connexion);
+    if (mysqli_num_rows($request) != 0) { //if login success
+        return true;
+    } else { //else
         return false;
 
     }
