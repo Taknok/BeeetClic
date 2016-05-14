@@ -398,14 +398,36 @@ function generatedValidationEmail($len){
 
 
 
+//////////////////
+
+function postsBets($sport) {
+    
+    $connexion = connect2DB();
+    $stmt = mysqli_prepare($connexion, "SELECT * FROM matchs WHERE sport = ? ORDER BY date_match DESC;");
+    mysqli_stmt_bind_param($stmt, 's', $sport);
+    mysqli_stmt_execute($stmt);
+    $res = mysqli_stmt_get_result($stmt);
+    $assoc = mysqli_fetch_all($res, MYSQLI_ASSOC);
+    mysqli_free_result($res);
+    mysqli_close($connexion);
+    return $assoc;
+}
 
 
 
 
-
-
-
-
+function findBet($id) {
+    
+    $connexion = connect2DB();
+    $stmt = mysqli_prepare($connexion, "SELECT * FROM matchs WHERE id= ? ;");
+    mysqli_stmt_bind_param($stmt, 'i', $id);
+    mysqli_stmt_execute($stmt);
+    $request = mysqli_stmt_get_result($stmt);
+    $assoc = mysqli_fetch_assoc($request);
+    
+    mysqli_close($connexion);
+    return $assoc;
+}
 
 
 
