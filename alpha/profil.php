@@ -42,7 +42,9 @@ if (isset($_POST["submit_name"])){
 }
 
 
-
+/*
+Modify email
+*/
 if (isset($_POST["submit_mail"])){
     $array=preventXSS($_POST);
     
@@ -66,11 +68,81 @@ if (isset($_POST["submit_mail"])){
             $_SESSION["flash"]["success"] = "Mail modifié";
         }
     } else {
-        $_SESSION["flash"]["danger"] = "Nom et prénom non modifiés";
+        $_SESSION["flash"]["danger"] = "Mail non modifiés";
     }
 }
 
 
+/*
+Modify pwd
+*/
+if (isset($_POST["submit_pwd"])){
+    $array=preventXSS($_POST);
+    
+    $tmp_array["pwd"] = $array["new-pwd"];
+    $tmp_array["confirm-pwd"] = $array["new-confirm-pwd"];
+    
+    $error = errorOnPwd($error, $tmp_array);
+        
+    
+    debug($array);
+    debug($error);
+    
+    if (checkPwd($pseudo,$array["pwd"]) && !$error["error-detected"]){
+        $connexion = connect2DB();
+    
+        $stmt = mysqli_prepare($connexion, "UPDATE Compte SET motDePass = ? WHERE pseudo = ?");
+        
+        $hashed = hash('sha512', $array["new-pwd"]);
+        
+        mysqli_stmt_bind_param($stmt, 'ss', $hashed, $pseudo);
+        $success = mysqli_stmt_execute($stmt);
+        
+        if (!$success){
+            $_SESSION["flash"]["danger"] = "Mot de passe non modifié";
+        } else {
+            $_SESSION["flash"]["success"] = "Mot de passe modifié";
+        }
+    } else {
+        $_SESSION["flash"]["danger"] = "Mot de passe non modifié";
+    }
+}
+
+
+
+/*
+Add money
+*/
+if (isset($_POST["submit_argent"])){
+    $array=preventXSS($_POST);
+    
+    
+    if (isset($array["argent"]) && (!is_numeric($array["argent"]) || $array["argent"] < 0)){
+        $error["argent"] = "Vous devez saisir une somme positive";
+        $error["error-detected"] = 1;
+    }
+        
+    
+    debug($array);
+    debug($error);
+    
+    if (checkPwd($pseudo,$array["pwd"]) && !$error["error-detected"]){
+        $connexion = connect2DB();
+    
+        $stmt = mysqli_prepare($connexion, "UPDATE Compte SET argent = argent + ? WHERE pseudo = ?");        
+        mysqli_stmt_bind_param($stmt, 'is', $array["argent"], $pseudo);
+        $success = mysqli_stmt_execute($stmt);
+        
+        if (!$success){
+            $_SESSION["flash"]["danger"] = "Compte non crédité";
+        } else {
+            $_SESSION["flash"]["success"] = "Compte crédité";
+        }
+    } else {
+        $_SESSION["flash"]["danger"] = "Compte non crédité";
+    }
+}
+//"UPDATE TableName SET TableField = TableField + 1 WHERE SomeFilterField = @ParameterID"
 
 
 include("php/begin.php");
@@ -214,7 +286,7 @@ include("php/begin.php");
                 <div class="form-group">
                   <label class="col-md-4 control-label" for="passwordinput">Nouveaux mot de passe</label>
                   <div class="col-md-5">
-                    <input id="passwordinput" name="passwordinput" placeholder="" class="form-control input-md" required="" type="password">
+                    <input id="passwordinput" name="new-pwd" placeholder="" class="form-control input-md" required="" type="password">
                     <span class="help-block">8 characteres obligatoires</span>
                   </div>
                 </div>
@@ -222,14 +294,14 @@ include("php/begin.php");
                 <div class="form-group">
                   <label class="col-md-4 control-label" for="passwordinput">Confirmation</label>
                   <div class="col-md-5">
-                    <input id="passwordinput" name="passwordinput" placeholder="" class="form-control input-md" required="" type="password">
+                    <input id="passwordinput" name="new-confirm-pwd" placeholder="" class="form-control input-md" required="" type="password">
                   </div>
                 </div>
                  <!-- Password input-->
                 <div class="form-group">
-                  <label class="col-md-4 control-label" for="passwordinput">Ancien mot de passe</label>
+                  <label class="col-md-4 control-label" for="pwd">Ancien mot de passe</label>
                   <div class="col-md-5">
-                    <input id="passwordinput" name="passwordinput" placeholder="" class="form-control input-md" required="" type="password">
+                    <input id="passwordinput" name="pwd" placeholder="" class="form-control input-md" required="" type="password">
                   </div>
                 </div>
 
@@ -237,7 +309,7 @@ include("php/begin.php");
                 <div class="form-group">
                   <label class="col-md-4 control-label" for="singlebutton"></label>
                   <div class="col-md-4">
-                    <button id="pwd_singlebutton" name="pwd_singlebutton" class="btn btn-info"> Confirmer</button>
+                    <button id="pwd_singlebutton" name="submit_pwd" class="btn btn-info"> Confirmer</button>
                   </div>
                 </div>
 
@@ -261,18 +333,28 @@ include("php/begin.php");
               <div class="col-md-5">
                 <div class="input-group">
                   <span class="input-group-addon">€</span>
-                  <input id="euros" name="euros" class="form-control" placeholder="" required="" type="number">
+                  <input id="euros" name="argent" class="form-control" placeholder="" required="" type="text">
                 </div>
               </div>
             </div>
-
+            
+            <!--Password-->
+            <div class="form-group">
+              <label class="col-md-4 control-label" for="pwd">Mot de passe</label>
+              <div class="col-md-5">
+                <input id="passwordinput" name="pwd" placeholder="" class="form-control input-md" required="" type="password">
+              </div>
+            </div>
+                
             <!-- Button -->
             <div class="form-group">
               <label class="col-md-4 control-label" for="reload_account"></label>
               <div class="col-md-4">
-                <button id="reload_account" name="reload_account" class="btn btn-info">Créditer</button>
+                <button id="reload_account" name="submit_argent" class="btn btn-info">Créditer</button>
               </div>
             </div>
+                
+            
 
             </fieldset>
             </form>

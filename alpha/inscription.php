@@ -1,9 +1,11 @@
 <?php
 
-session_start();
+
 
 include("php/fonctions.php");
 include("php/config.php");
+
+mySessionStart();
 
 function displayError($error, $cle){
     if (isset($error[$cle]) && $error[$cle]){
@@ -45,15 +47,15 @@ if (isset($_POST["submit-inscription"])){
         
         debug($send_mail_succes);
         
-        /*if (!$send_mail_succes){
+        if (!$send_mail_succes){
             $error["error-detected"] = 1;
-            $error["mail"]  ="Erreur lors de l'envoie du mail de confirmation à l'adresse indiquée";
-        } else {*/
+            $error["mail"]  = "Erreur lors de l'envoie du mail de confirmation à l'adresse indiquée";
+        } else {
             $inscription_success = ajoutCompte($array["pseudo"], $array["nom"], $array["prenom"], $array["mail"], $array["pwd"], $array["argent"], $valid_mail);
         
             $_SESSION["flash"]["success"] = "Un mail de validation vous a été envoyé";
             
-            header("Location:home.php");
+            //header("Location:home.php");
         }
         
     }
@@ -222,7 +224,7 @@ if (isset($_POST["submit-inscription"])){
                     displayError($error, "argent");
                    ?>
 
-                   required="" type="number">
+                   required="" type="text">
 
             </div>
         </div>
@@ -233,11 +235,11 @@ if (isset($_POST["submit-inscription"])){
         <label class="col-md-4 control-label" for="age-checkboxes">Je comfime être majeur</label>
         <div class="col-md-4">
         <label class="checkbox-inline" for="age-checkboxes-0">
-          <input name="age-checkboxes" id="age-checkboxes-0" value="1"  type="checkbox">
+          <input name="age-checkboxes" id="age-checkboxes-0" value="1"  type="radio">
           Oui
         </label>
         <label class="checkbox-inline" for="age-checkboxes-1">
-          <input name="age-checkboxes" id="age-checkboxes-1" value="0" active type="checkbox">
+          <input name="age-checkboxes" id="age-checkboxes-1" value="0" active type="radio">
           Non
         </label>
     </div>
@@ -248,11 +250,11 @@ if (isset($_POST["submit-inscription"])){
       <label class="col-md-4 control-label" for="agreement-checkboxes">J'accepte les conditions d'utilisations</label>
       <div class="col-md-4">
         <label class="checkbox-inline" for="agreement-checkboxes-0">
-          <input name="agreement-checkboxes" id="agreement-checkboxes-0" value="1" type="checkbox">
+          <input name="agreement-checkboxes" id="agreement-checkboxes-0" value="1" type="radio">
           Oui
         </label>
         <label class="checkbox-inline" for="agreement-checkboxes-1">
-          <input name="agreement-checkboxes" id="agreement-checkboxes-1" active value="0" type="checkbox">
+          <input name="agreement-checkboxes" id="agreement-checkboxes-1" active value="0" type="radio">
           Non
         </label>
     </div>

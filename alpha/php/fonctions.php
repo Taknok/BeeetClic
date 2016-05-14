@@ -35,6 +35,9 @@ function auth($login, $motDePass) {
     
     $hashed = hash('sha512', $motDePass);
     
+    debug( hash('sha512', "u"));
+    debug( hash('sha512', "y"));
+    
     mysqli_stmt_bind_param($stmt, 'ss',$login, $hashed );
     mysqli_stmt_execute($stmt);
     $request = mysqli_stmt_get_result($stmt);
@@ -158,6 +161,7 @@ function ajoutCompte($pseudo, $nom, $prenom, $email, $motDePass, $argent, $valid
 
     $argent = (int) $argent;
         
+    debug( hash('sha512', $motDePass));
     
     $connexion = connect2DB();
     $stmt = mysqli_prepare($connexion, "INSERT INTO Compte (pseudo, nom, prenom, email, motDePass, argent, validation_mail) VALUES (?, ?, ?, ?, ?, ?, ?)");
@@ -242,7 +246,6 @@ function initErrorInputMessage(){
 
 
 function errorOnText($error, $array, $cle){
-    echo empty($array[$cle]);
     if ( empty($array[$cle])){ 
         $error[$cle] = $cle . " non complété";
         $error["error-detected"] = 1;
@@ -254,9 +257,10 @@ function errorOnText($error, $array, $cle){
 }
 
 function errorOnMail($error, $array){
-    if (empty($array["mail"])){
+    if ( !isset($array["mail"]) || empty($array["mail"]) ){
         $error["mail"] = "mail nom complété";
         $error["error-detected"] = 1;
+        return $error; //return here to exit function and not test other  in case mail not set
     }
 
     if (!filter_var($array["mail"], FILTER_VALIDATE_EMAIL) === true){
@@ -275,7 +279,7 @@ function errorOnMail($error, $array){
 }
         
 function errorOnPwd($error, $array){
-    if ( empty($array["pwd"])){
+    if ( !isset($array["pwd"]) || empty($array["pwd"]) ){
         $error["pwd"] = "mot de passe non complété";
         $error["error-detected"] = 1;
     //mettre les condition sur le mot de passe ici
@@ -296,22 +300,23 @@ function errorOnPwd($error, $array){
 function errorInput($array){
     $error_input = initErrorInputMessage();
     
-    /*$fields = ["pseudo", "nom", "prenom", "mail", "confirm-mail", "pwd", "confirm-pwd", "age-checkboxes", "agreement-checkboxes", "argent"];
+    $fields = ["pseudo", "nom", "prenom", "mail", "confirm-mail", "pwd", "confirm-pwd", "age-checkboxes", "agreement-checkboxes", "argent"];
     
     
     //regarde si tous els champs ont été remplis
     foreach($fields as $element) {
-        if(!isset($array[$element]) || empty($array[$element])) {
-            $error_input["not-all-completed"] = 1;
+        if(!isset($array[$element])) {
             $error_input["error-detected"] = 1;
+            $error_input[$element] = $element . " non defini";
+            return $error_input;
         }
-    }*/
+    }
     
     
     
     $error_input = errorOnText($error_input, $array, "pseudo");
     
-    if (!avaiblePseudo($array["pseudo"])){
+    if (isset($array["mail"]) && !avaiblePseudo($array["pseudo"])){
         $error_input["pseudo"] = "pseudo deja pris";
         $error_input["error-detected"] = 1;
     }
@@ -324,7 +329,7 @@ function errorInput($array){
     
     $error_input = errorOnMail($error_input, $array);
     
-    if (!avaibleMail($array["mail"])){
+    if (isset($array["mail"]) && !avaibleMail($array["mail"])){
         $error_input["mail"] = "ce mail est deja utilisé par un autre compte";
         $error_input["error-detected"] = 1;
     }
@@ -334,17 +339,17 @@ function errorInput($array){
                 
 
     
-    if ($array["age-checkboxes"] != 1){
+    if (isset($array["age-checkboxes"]) && $array["age-checkboxes"] != 1){
         $error_input["age-checkboxes"] = "Vous devez etre majeur";
         $error_input["error-detected"] = 1;
     }
     
-    if ($array["agreement-checkboxes"] != 1){
+    if (isset($array["age-checkboxes"]) && $array["agreement-checkboxes"] != 1){
         $error_input["agreement-checkboxes"] = "Vous devez acceptez les CGU";
         $error_input["error-detected"] = 1;
     }
     
-    if ($array["argent"] < 0){
+    if (isset($array["argent"]) && (!is_numeric($array["argent"]) || $array["argent"] < 0)){
         $error_input["argent"] = "Vous devez saisir une somme positive";
         $error_input["error-detected"] = 1;
     }

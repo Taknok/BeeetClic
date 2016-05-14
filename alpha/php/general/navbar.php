@@ -48,7 +48,7 @@
             
             <!-- PROFILE -->
 			<li class="dropdown">
-                <a href="profile.php" class="dropdown-toggle disabled" data-toggle="dropdown"> Profile <b class="caret"></b></a>
+                <a href="profil.php" class="dropdown-toggle disabled" data-toggle="dropdown"> Profil <b class="caret"></b></a>
 				<ul class="dropdown-menu account-background">
 					<li>
 						<div class="navbar-content">
