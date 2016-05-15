@@ -28,7 +28,7 @@
 		
         <!--   SPORT : SOCCER & TENNIS  -->   
         <ul class="nav navbar-nav">
-            <li><a href="FOOTBALL.html" > FOOTBALL</a></li>
+            <li><a href="paris.php?categorie=foot" > FOOTBALL</a></li>
             <li><a href="SPORTS_BETS.html#" > TENNIS </a></li>
         </ul>
         

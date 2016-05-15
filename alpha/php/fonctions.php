@@ -24,7 +24,12 @@ function checkConnect(){
 
 
 function connect2DB() {
-  return mysqli_connect($GLOBALS['dbServ'], $GLOBALS['dbUser'], $GLOBALS['dbPass'], $GLOBALS['dbName']);
+    $connexion =  mysqli_connect($GLOBALS['dbServ'], $GLOBALS['dbUser'], $GLOBALS['dbPass'], $GLOBALS['dbName']);
+    if (mysqli_connect_errno($connexion)){
+        echo "<p class=> Echec lors de la connection a la base de donnée" . mysqli_connect_error() . "</p>";
+    }
+    return $connexion;
+
 }
 
 
@@ -146,6 +151,38 @@ function getValid_mail($pseudo){
     return $assoc['validation_mail'];
 }
 
+function getMatchs(){
+    $connexion = connect2DB();
+    
+    $stmt = mysqli_prepare($connexion, "SELECT * FROM Matchs;");
+    mysqli_stmt_execute($stmt);
+    $request = mysqli_stmt_get_result($stmt);
+    
+    $result = [];
+    do  {
+        $assoc = mysqli_fetch_assoc($request);
+        $result[$assoc["id"]] = $assoc; 
+    } while ($assoc);
+
+    
+    
+    mysqli_close($connexion);
+    return $result;
+}
+
+function getMatch($id){
+    $connexion = connect2DB();
+    
+    $stmt = mysqli_prepare($connexion, "SELECT * FROM Matchs WHERE id = ?;");
+    mysqli_stmt_bind_param($stmt, 'i', $id);
+    mysqli_stmt_execute($stmt);
+    $request = mysqli_stmt_get_result($stmt);
+
+    $assoc = mysqli_fetch_assoc($request);
+
+    return $assoc;
+}
+
 function setValid_mail($pseudo){
     $connexion = connect2DB();
     echo $pseudo;
@@ -214,6 +251,23 @@ function avaibleMail($mail){
         return true;
     } else {
         return false;
+    }
+    
+}
+
+function avaiblePari($id){
+    $connexion = connect2DB();
+    $stmt = mysqli_prepare($connexion, "SELECT id FROM Matchs WHERE id = ?");
+    mysqli_stmt_bind_param($stmt, 'i', $id);
+    mysqli_stmt_execute($stmt);
+    $request = mysqli_stmt_get_result($stmt);
+    
+    mysqli_close($connexion);
+    if (mysqli_num_rows($request) != 0) { //if id not found
+        return false;
+    } else { //else
+        return true;
+
     }
     
 }
@@ -402,6 +456,15 @@ function generatedValidationEmail($len){
 }
 
 
+function displayError($error, $cle){
+    if (isset($error[$cle]) && $error[$cle]){
+        echo "class='form-control form-error input-md' value='" . $_POST[$cle] . "'";
+    } else if (isset($error["error-detected"])){
+        echo "class='form-control input-md' value='" . $_POST[$cle] . "'"; 
+    } else {
+        echo "class='form-control input-md'"; 
+    }
+}
 
 
 
@@ -418,8 +481,55 @@ function generatedValidationEmail($len){
 
 
 
+function insertNvPari($pari, $choix){
+    $nb_choix = 3; //eq1 eq2 ou null
+    $n = 3; //facteur d'evolution
+    
+    
+    $id = $pari["id"];
+    
+    if ($choix == 1){
+        $coteini = $pari["coteEq1ini"];
+        $cleCote = "coteEq1";
+        $cleNbPari = "nbParieurEq1";
+    } else if ($choix == 2){
+        $coteini = $pari["coteEq2ini"];
+        $cleCote = "coteEq2";
+        $cleNbPari = "nbParieurEq2";
+    } else if ($choix == 3){
+        $cleCote = "coteNull";
+        $coteini = $pari["coteNullini"];
+        $cleNbPari = "nbParieurNull";
+    } else {
+        echo "error";
+        die();
+    }
+    
+    $nb_parieurs_choix = $pari[$cleNbPari] + 1; //plus le nouveau
+    
+    $nvCote = 1 + ( $coteini / ( $nb_choix * ( $nb_parieurs_choix / ($pari["nbparieurs"] + 1 ) ) )  );
+    
+    $connexion = connect2DB();
+    
+    if ($choix == 1){
+    $stmt = mysqli_prepare($connexion, "UPDATE Matchs SET coteEq1 = ?, nbParieurEq1 = nbParieurEq1 + 1, nbparieurs = nbparieurs + 1  WHERE id = ? ");
+        
+    } else if ($choix == 2){
+        $stmt = mysqli_prepare($connexion, "UPDATE Matchs SET coteEq2 = ?, nbParieurEq2 = nbParieurEq2 + 1, nbparieurs = nbparieurs + 1  WHERE id = ? ");
+    } else if ($choix == 3){
+        $stmt = mysqli_prepare($connexion, "UPDATE Matchs SET coteNull = ?, nbParieurNull = nbParieurNull+ 1, nbparieurs = nbparieurs + 1  WHERE id = ? ");
+    } else {
+    echo "error";
+    die();
+    }
+    
+    echo "stmt";
+    debug($stmt);
+    mysqli_stmt_bind_param($stmt, 'ii', $nvCote, $id);
+    $success = mysqli_stmt_execute($stmt);
 
-
+    mysqli_close($connexion);
+}
 
 
 

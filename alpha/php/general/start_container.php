@@ -19,6 +19,14 @@ if(isset($_SESSION["flash"])){
     unset($_SESSION["flash"]);
 }
 
+if(isset($_SESSION["flash-refresh"])){
+    foreach ($_SESSION["flash-refresh"] as $cle => $message){
+        $_SESSION["flash"][$cle] = $message;
+    }
+    unset($_SESSION["flash-refresh"]);
+}
+
+
 ?> 
 
  <div id="main_part" class="container">   

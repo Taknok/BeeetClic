@@ -7,15 +7,6 @@ include("php/config.php");
 
 mySessionStart();
 
-function displayError($error, $cle){
-    if (isset($error[$cle]) && $error[$cle]){
-        echo "class='form-control form-error input-md' value='" . $_POST[$cle] . "'";
-    } else if (isset($error["error-detected"])){
-        echo "class='form-control input-md' value='" . $_POST[$cle] . "'"; 
-    } else {
-        echo "class='form-control input-md'"; 
-    }
-}
 
 debug($_SESSION);
 
@@ -72,16 +63,6 @@ if (isset($_POST["submit-inscription"])){
 ?>
 
 
-<style>
-    .form-error{
-        border-color: red;
-    }
-    .form-error:focus{
-        border-color:red;
-        box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.075) inset, 0px 0px 8px rgba(102, 10, 10, 0.6);
-    }
-
-</style>
 
 
 

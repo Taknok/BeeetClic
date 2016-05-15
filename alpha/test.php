@@ -1,6 +1,6 @@
 <?php
 
-include("php/fonctions.php");
+include_once("php/fonctions.php");
 
 
 /*echo print_r($_SESSION);*/
@@ -9,18 +9,12 @@ echo "<br />";
 
 
 
-$fields = ["pseudo", "nom", "prenom", "mail", "confirm-mail", "pwd", "confirm-pwd", "age-checkboxes", "agreement-checkboxes", "argent"];
-    
+$paris = getMatchs();
 
-//regarde si tous els champs ont été remplis
-foreach($fields as $element) {
-    $array[$element]= "";
-}
+$pari = getMatch(4);
+debug($pari);
 
-$array["argent"] = -1;
-
-$error = errorInput($array);
-debug($error);
+insertNvPari($pari, 1);
 
 
 ?>
