@@ -14,7 +14,7 @@ $paris = getMatchs();
 $pari = getMatch(4);
 debug($pari);
 
-insertNvPari($pari, 1);
 
+annulationPari(7);
 
 ?>

@@ -158,11 +158,12 @@ function getMatchs(){
     mysqli_stmt_execute($stmt);
     $request = mysqli_stmt_get_result($stmt);
     
-    $result = [];
-    do  {
+    
+    $assoc = mysqli_fetch_assoc($request);
+    while ($assoc){
+        $result[$assoc["id"]] = $assoc;
         $assoc = mysqli_fetch_assoc($request);
-        $result[$assoc["id"]] = $assoc; 
-    } while ($assoc);
+    }
 
     
     
@@ -185,24 +186,17 @@ function getMatch($id){
 
 function setValid_mail($pseudo){
     $connexion = connect2DB();
-    echo $pseudo;
     $stmt = mysqli_prepare($connexion, "UPDATE Compte SET validation_mail = NULL, validation_date = NOW() WHERE pseudo = ?");
     mysqli_stmt_bind_param($stmt, 's', $pseudo);
-    $test = mysqli_stmt_execute($stmt);    
+    mysqli_stmt_execute($stmt);    
     mysqli_close($connexion);
-    echo $test;
 }
 
 function ajoutCompte($pseudo, $nom, $prenom, $email, $motDePass, $argent, $valid_mail){
-    //tester que les variables sont bien les tring ou int
-
-    $argent = (int) $argent;
-        
-    debug( hash('sha512', $motDePass));
     
     $connexion = connect2DB();
     $stmt = mysqli_prepare($connexion, "INSERT INTO Compte (pseudo, nom, prenom, email, motDePass, argent, validation_mail) VALUES (?, ?, ?, ?, ?, ?, ?)");
-    mysqli_stmt_bind_param($stmt, 'sssssis',$pseudo, $nom, $prenom, $email, hash('sha512', $motDePass), $argent, $valid_mail);
+    mysqli_stmt_bind_param($stmt, 'sssssds',$pseudo, $nom, $prenom, $email, hash('sha512', $motDePass), $argent, $valid_mail);
     $success = mysqli_stmt_execute($stmt);
     mysqli_close($connexion);
     
@@ -252,7 +246,6 @@ function avaibleMail($mail){
     } else {
         return false;
     }
-    
 }
 
 function avaiblePari($id){
@@ -263,7 +256,7 @@ function avaiblePari($id){
     $request = mysqli_stmt_get_result($stmt);
     
     mysqli_close($connexion);
-    if (mysqli_num_rows($request) != 0) { //if id not found
+    if (mysqli_num_rows($request) == 0) { //if id not found
         return false;
     } else { //else
         return true;
@@ -271,7 +264,7 @@ function avaiblePari($id){
     }
     
 }
-
+/*
 function coteEq1($id){
     $connexion = connect2DB();
     
@@ -284,7 +277,25 @@ function coteEq1($id){
     mysqli_close($connexion);
     return $assoc['coteEq1'];
 
+}*/
+
+
+function aDejaParie($id_match, $id_joueur){
+    $connexion = connect2DB();
+    $stmt = mysqli_prepare($connexion, "SELECT idPari FROM Paris WHERE idMatch = ? AND idParieur = ? ");
+    mysqli_stmt_bind_param($stmt, 'ii', $id_match, $id_joueur);
+    mysqli_stmt_execute($stmt);
+    $request = mysqli_stmt_get_result($stmt);
+    
+    mysqli_close($connexion);
+    if (mysqli_num_rows($request) == 0) { //if id not found
+        return false;
+    } else { //else
+        return true;
+    }
 }
+
+
 
 function preventXSS($array){
     foreach ($array as $cle => $element){
@@ -481,7 +492,7 @@ function displayError($error, $cle){
 
 
 
-function insertNvPari($pari, $choix){
+function actualisePariMatch($pari, $choix){
     $nb_choix = 3; //eq1 eq2 ou null
     $n = 3; //facteur d'evolution
     
@@ -523,9 +534,7 @@ function insertNvPari($pari, $choix){
     die();
     }
     
-    echo "stmt";
-    debug($stmt);
-    mysqli_stmt_bind_param($stmt, 'ii', $nvCote, $id);
+    mysqli_stmt_bind_param($stmt, 'di', $nvCote, $id);
     $success = mysqli_stmt_execute($stmt);
 
     mysqli_close($connexion);
@@ -533,15 +542,129 @@ function insertNvPari($pari, $choix){
 
 
 
+function ajoutPari($id_match, $id_joueur, $montant, $equipe, $cote){
+
+    $connexion = connect2DB();
+    $stmt = mysqli_prepare($connexion, "INSERT INTO Paris (idMatch, idParieur, montant, equipe, cote, datePari, gagne, fini) VALUES (?, ?, ?, ?, ?, NOW(), 0, 0)");
+    mysqli_stmt_bind_param($stmt, 'iidid', $id_match, $id_joueur, $montant, $equipe, $cote);
+    $success = mysqli_stmt_execute($stmt);
+    mysqli_close($connexion);
+    
+    return $success;
+}
 
 
+function decArgent($id_joueur, $montant){
+    $connexion = connect2DB();
+    $stmt = mysqli_prepare($connexion, "UPDATE Compte SET argent = argent - ? WHERE id = ?");
+    mysqli_stmt_bind_param($stmt, 'di', $montant, $id_joueur);
+    mysqli_stmt_execute($stmt);    
+    mysqli_close($connexion);
+}
 
 
+function annulationPari($id_pari){
+    $connexion = connect2DB();
+    $stmt = mysqli_prepare($connexion, "SELECT idParieur, montant FROM Paris WHERE idPari = ? ");
+    mysqli_stmt_bind_param($stmt, 'i', $id_pari);
+    mysqli_stmt_execute($stmt);
+    
+    $request = mysqli_stmt_get_result($stmt);
+    $pari = mysqli_fetch_assoc($request);
+    
+    $argent = $pari["montant"] * 0.5; //on rends que 50% de la somme pariée
+    echo"argent";
+    debug($argent);
+    
+    $stmt = mysqli_prepare($connexion, "UPDATE Compte  SET argent = argent + ? where id = ? ");
+    mysqli_stmt_bind_param($stmt, 'di', $argent, $pari["idParieur"]);
+    mysqli_stmt_execute($stmt);
+    
+    $stmt = mysqli_prepare($connexion, "DELETE FROM Paris WHERE idPari = ?");
+    mysqli_stmt_bind_param($stmt, 'i', $id_pari);
+    mysqli_stmt_execute($stmt);
+    
+    mysqli_close($connexion);
+    
+}
 
+function getIdPari($id_match, $id_joueur){
+    $connexion = connect2DB();
+    
+    $stmt = mysqli_prepare($connexion, "SELECT idPari FROM Paris WHERE idMatch = ? AND idParieur = ?;");
+    mysqli_stmt_bind_param($stmt, 'ii', $id_match, $id_joueur);
+    mysqli_stmt_execute($stmt);
+    $request = mysqli_stmt_get_result($stmt);
+    $assoc = mysqli_fetch_assoc($request);
+    
+    mysqli_close($connexion);
+    return $assoc['idPari'];
+}
 
+function pariFini($id_pari){
+    $connexion = connect2DB();
 
+    $stmt = mysqli_prepare($connexion, "SELECT fini FROM Paris WHERE idPari = ?");
+    mysqli_stmt_bind_param($stmt, 'i',$id_pari);
+    mysqli_stmt_execute($stmt);
+    
+    $request = mysqli_stmt_get_result($stmt);
+    $assoc = mysqli_fetch_assoc($request);
+    
+    mysqli_close($connexion);
+    
+    if (empty($assoc)){
+        $_SESSION["flash"]["danger"] = "pari inconnu";
+    } else {
+        if( $assoc["fini"] == 1){
+            return true;
+        } else {
+            return false;
+        }
+    }
+}
 
+function matchFini($id_match){
+    $connexion = connect2DB();
 
+    $stmt = mysqli_prepare($connexion, "SELECT fini FROM Matchs WHERE id = ?");
+    mysqli_stmt_bind_param($stmt, 'i',$id_match);
+    mysqli_stmt_execute($stmt);
+    
+    $request = mysqli_stmt_get_result($stmt);
+    $assoc = mysqli_fetch_assoc($request);
+    
+    mysqli_close($connexion);
+    
+    if (empty($assoc)){
+        $_SESSION["flash"]["danger"] = "match inconnu";
+    } else {
+        if( $assoc["fini"] == 1){
+            return true;
+        } else {
+            return false;
+        }
+    }
+}
+
+function getGagne($id_pari){
+    $connexion = connect2DB();
+
+    $stmt = mysqli_prepare($connexion, "SELECT idPari FROM Paris WHERE (idPari = ? AND fini = 1 AND gagne = 1 )");
+    mysqli_stmt_bind_param($stmt, 'i',$id_pari);
+    mysqli_stmt_execute($stmt);
+    
+    $request = mysqli_stmt_get_result($stmt);
+    $assoc = mysqli_fetch_assoc($request);
+    
+    mysqli_close($connexion);
+    
+    if (mysqli_num_rows($request) != 0){
+        return true;
+    } else {
+        return false;
+    }
+}
 
 
 ?>

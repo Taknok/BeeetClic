@@ -130,7 +130,7 @@ if (isset($_POST["submit_argent"])){
         $connexion = connect2DB();
     
         $stmt = mysqli_prepare($connexion, "UPDATE Compte SET argent = argent + ? WHERE pseudo = ?");        
-        mysqli_stmt_bind_param($stmt, 'is', $array["argent"], $pseudo);
+        mysqli_stmt_bind_param($stmt, 'ds', $array["argent"], $pseudo);
         $success = mysqli_stmt_execute($stmt);
         
         if (!$success){
