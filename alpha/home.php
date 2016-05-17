@@ -1,9 +1,10 @@
 <?php
 
-    session_start();
-
-    print_r($_SESSION);
+    
     include("php/fonctions.php");
+
+    mySessionStart();
+    print_r($_SESSION);
 
     include("php/begin.php");
     include("php/home/carousel.php");

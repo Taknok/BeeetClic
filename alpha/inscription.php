@@ -1,19 +1,12 @@
 <?php
 
-session_start();
+
 
 include("php/fonctions.php");
 include("php/config.php");
 
-function displayError($error, $cle){
-    if (isset($error[$cle]) && $error[$cle]){
-        echo "class='form-control form-error input-md' value='" . $_POST[$cle] . "'";
-    } else if (isset($error["error-detected"])){
-        echo "class='form-control input-md' value='" . $_POST[$cle] . "'"; 
-    } else {
-        echo "class='form-control input-md'"; 
-    }
-}
+mySessionStart();
+
 
 debug($_SESSION);
 
@@ -45,15 +38,15 @@ if (isset($_POST["submit-inscription"])){
         
         debug($send_mail_succes);
         
-        /*if (!$send_mail_succes){
+        if (!$send_mail_succes){
             $error["error-detected"] = 1;
-            $error["mail"]  ="Erreur lors de l'envoie du mail de confirmation à l'adresse indiquée";
-        } else {*/
+            $error["mail"]  = "Erreur lors de l'envoie du mail de confirmation à l'adresse indiquée";
+        } else {
             $inscription_success = ajoutCompte($array["pseudo"], $array["nom"], $array["prenom"], $array["mail"], $array["pwd"], $array["argent"], $valid_mail);
         
             $_SESSION["flash"]["success"] = "Un mail de validation vous a été envoyé";
             
-            header("Location:home.php");
+            //header("Location:home.php");
         }
         
     }
@@ -70,16 +63,6 @@ if (isset($_POST["submit-inscription"])){
 ?>
 
 
-<style>
-    .form-error{
-        border-color: red;
-    }
-    .form-error:focus{
-        border-color:red;
-        box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.075) inset, 0px 0px 8px rgba(102, 10, 10, 0.6);
-    }
-
-</style>
 
 
 
@@ -222,7 +205,7 @@ if (isset($_POST["submit-inscription"])){
                     displayError($error, "argent");
                    ?>
 
-                   required="" type="number">
+                   required="" type="text">
 
             </div>
         </div>
@@ -233,11 +216,11 @@ if (isset($_POST["submit-inscription"])){
         <label class="col-md-4 control-label" for="age-checkboxes">Je comfime être majeur</label>
         <div class="col-md-4">
         <label class="checkbox-inline" for="age-checkboxes-0">
-          <input name="age-checkboxes" id="age-checkboxes-0" value="1"  type="checkbox">
+          <input name="age-checkboxes" id="age-checkboxes-0" value="1"  type="radio">
           Oui
         </label>
         <label class="checkbox-inline" for="age-checkboxes-1">
-          <input name="age-checkboxes" id="age-checkboxes-1" value="0" active type="checkbox">
+          <input name="age-checkboxes" id="age-checkboxes-1" value="0" active type="radio">
           Non
         </label>
     </div>
@@ -248,11 +231,11 @@ if (isset($_POST["submit-inscription"])){
       <label class="col-md-4 control-label" for="agreement-checkboxes">J'accepte les conditions d'utilisations</label>
       <div class="col-md-4">
         <label class="checkbox-inline" for="agreement-checkboxes-0">
-          <input name="agreement-checkboxes" id="agreement-checkboxes-0" value="1" type="checkbox">
+          <input name="agreement-checkboxes" id="agreement-checkboxes-0" value="1" type="radio">
           Oui
         </label>
         <label class="checkbox-inline" for="agreement-checkboxes-1">
-          <input name="agreement-checkboxes" id="agreement-checkboxes-1" active value="0" type="checkbox">
+          <input name="agreement-checkboxes" id="agreement-checkboxes-1" active value="0" type="radio">
           Non
         </label>
     </div>

@@ -24,7 +24,12 @@ function checkConnect(){
 
 
 function connect2DB() {
-  return mysqli_connect($GLOBALS['dbServ'], $GLOBALS['dbUser'], $GLOBALS['dbPass'], $GLOBALS['dbName']);
+    $connexion =  mysqli_connect($GLOBALS['dbServ'], $GLOBALS['dbUser'], $GLOBALS['dbPass'], $GLOBALS['dbName']);
+    if (mysqli_connect_errno($connexion)){
+        echo "<p class=> Echec lors de la connection a la base de donnée" . mysqli_connect_error() . "</p>";
+    }
+    return $connexion;
+
 }
 
 
@@ -34,6 +39,9 @@ function auth($login, $motDePass) {
     $stmt = mysqli_prepare($connexion, "SELECT * FROM Compte WHERE pseudo=? AND motDePass=? ;");
     
     $hashed = hash('sha512', $motDePass);
+    
+    debug( hash('sha512', "u"));
+    debug( hash('sha512', "y"));
     
     mysqli_stmt_bind_param($stmt, 'ss',$login, $hashed );
     mysqli_stmt_execute($stmt);
@@ -143,25 +151,52 @@ function getValid_mail($pseudo){
     return $assoc['validation_mail'];
 }
 
+function getMatchs(){
+    $connexion = connect2DB();
+    
+    $stmt = mysqli_prepare($connexion, "SELECT * FROM Matchs;");
+    mysqli_stmt_execute($stmt);
+    $request = mysqli_stmt_get_result($stmt);
+    
+    
+    $assoc = mysqli_fetch_assoc($request);
+    while ($assoc){
+        $result[$assoc["id"]] = $assoc;
+        $assoc = mysqli_fetch_assoc($request);
+    }
+
+    
+    
+    mysqli_close($connexion);
+    return $result;
+}
+
+function getMatch($id){
+    $connexion = connect2DB();
+    
+    $stmt = mysqli_prepare($connexion, "SELECT * FROM Matchs WHERE id = ?;");
+    mysqli_stmt_bind_param($stmt, 'i', $id);
+    mysqli_stmt_execute($stmt);
+    $request = mysqli_stmt_get_result($stmt);
+
+    $assoc = mysqli_fetch_assoc($request);
+
+    return $assoc;
+}
+
 function setValid_mail($pseudo){
     $connexion = connect2DB();
-    echo $pseudo;
     $stmt = mysqli_prepare($connexion, "UPDATE Compte SET validation_mail = NULL, validation_date = NOW() WHERE pseudo = ?");
     mysqli_stmt_bind_param($stmt, 's', $pseudo);
-    $test = mysqli_stmt_execute($stmt);    
+    mysqli_stmt_execute($stmt);    
     mysqli_close($connexion);
-    echo $test;
 }
 
 function ajoutCompte($pseudo, $nom, $prenom, $email, $motDePass, $argent, $valid_mail){
-    //tester que les variables sont bien les tring ou int
-
-    $argent = (int) $argent;
-        
     
     $connexion = connect2DB();
     $stmt = mysqli_prepare($connexion, "INSERT INTO Compte (pseudo, nom, prenom, email, motDePass, argent, validation_mail) VALUES (?, ?, ?, ?, ?, ?, ?)");
-    mysqli_stmt_bind_param($stmt, 'sssssis',$pseudo, $nom, $prenom, $email, hash('sha512', $motDePass), $argent, $valid_mail);
+    mysqli_stmt_bind_param($stmt, 'sssssds',$pseudo, $nom, $prenom, $email, hash('sha512', $motDePass), $argent, $valid_mail);
     $success = mysqli_stmt_execute($stmt);
     mysqli_close($connexion);
     
@@ -211,9 +246,25 @@ function avaibleMail($mail){
     } else {
         return false;
     }
-    
 }
 
+function avaiblePari($id){
+    $connexion = connect2DB();
+    $stmt = mysqli_prepare($connexion, "SELECT id FROM Matchs WHERE id = ?");
+    mysqli_stmt_bind_param($stmt, 'i', $id);
+    mysqli_stmt_execute($stmt);
+    $request = mysqli_stmt_get_result($stmt);
+    
+    mysqli_close($connexion);
+    if (mysqli_num_rows($request) == 0) { //if id not found
+        return false;
+    } else { //else
+        return true;
+
+    }
+    
+}
+/*
 function coteEq1($id){
     $connexion = connect2DB();
     
@@ -226,7 +277,25 @@ function coteEq1($id){
     mysqli_close($connexion);
     return $assoc['coteEq1'];
 
+}*/
+
+
+function aDejaParie($id_match, $id_joueur){
+    $connexion = connect2DB();
+    $stmt = mysqli_prepare($connexion, "SELECT idPari FROM Paris WHERE idMatch = ? AND idParieur = ? ");
+    mysqli_stmt_bind_param($stmt, 'ii', $id_match, $id_joueur);
+    mysqli_stmt_execute($stmt);
+    $request = mysqli_stmt_get_result($stmt);
+    
+    mysqli_close($connexion);
+    if (mysqli_num_rows($request) == 0) { //if id not found
+        return false;
+    } else { //else
+        return true;
+    }
 }
+
+
 
 function preventXSS($array){
     foreach ($array as $cle => $element){
@@ -242,7 +311,6 @@ function initErrorInputMessage(){
 
 
 function errorOnText($error, $array, $cle){
-    echo empty($array[$cle]);
     if ( empty($array[$cle])){ 
         $error[$cle] = $cle . " non complété";
         $error["error-detected"] = 1;
@@ -254,9 +322,10 @@ function errorOnText($error, $array, $cle){
 }
 
 function errorOnMail($error, $array){
-    if (empty($array["mail"])){
+    if ( !isset($array["mail"]) || empty($array["mail"]) ){
         $error["mail"] = "mail nom complété";
         $error["error-detected"] = 1;
+        return $error; //return here to exit function and not test other  in case mail not set
     }
 
     if (!filter_var($array["mail"], FILTER_VALIDATE_EMAIL) === true){
@@ -275,7 +344,7 @@ function errorOnMail($error, $array){
 }
         
 function errorOnPwd($error, $array){
-    if ( empty($array["pwd"])){
+    if ( !isset($array["pwd"]) || empty($array["pwd"]) ){
         $error["pwd"] = "mot de passe non complété";
         $error["error-detected"] = 1;
     //mettre les condition sur le mot de passe ici
@@ -296,22 +365,23 @@ function errorOnPwd($error, $array){
 function errorInput($array){
     $error_input = initErrorInputMessage();
     
-    /*$fields = ["pseudo", "nom", "prenom", "mail", "confirm-mail", "pwd", "confirm-pwd", "age-checkboxes", "agreement-checkboxes", "argent"];
+    $fields = ["pseudo", "nom", "prenom", "mail", "confirm-mail", "pwd", "confirm-pwd", "age-checkboxes", "agreement-checkboxes", "argent"];
     
     
     //regarde si tous els champs ont été remplis
     foreach($fields as $element) {
-        if(!isset($array[$element]) || empty($array[$element])) {
-            $error_input["not-all-completed"] = 1;
+        if(!isset($array[$element])) {
             $error_input["error-detected"] = 1;
+            $error_input[$element] = $element . " non defini";
+            return $error_input;
         }
-    }*/
+    }
     
     
     
     $error_input = errorOnText($error_input, $array, "pseudo");
     
-    if (!avaiblePseudo($array["pseudo"])){
+    if (isset($array["mail"]) && !avaiblePseudo($array["pseudo"])){
         $error_input["pseudo"] = "pseudo deja pris";
         $error_input["error-detected"] = 1;
     }
@@ -324,7 +394,7 @@ function errorInput($array){
     
     $error_input = errorOnMail($error_input, $array);
     
-    if (!avaibleMail($array["mail"])){
+    if (isset($array["mail"]) && !avaibleMail($array["mail"])){
         $error_input["mail"] = "ce mail est deja utilisé par un autre compte";
         $error_input["error-detected"] = 1;
     }
@@ -334,17 +404,17 @@ function errorInput($array){
                 
 
     
-    if ($array["age-checkboxes"] != 1){
+    if (isset($array["age-checkboxes"]) && $array["age-checkboxes"] != 1){
         $error_input["age-checkboxes"] = "Vous devez etre majeur";
         $error_input["error-detected"] = 1;
     }
     
-    if ($array["agreement-checkboxes"] != 1){
+    if (isset($array["age-checkboxes"]) && $array["agreement-checkboxes"] != 1){
         $error_input["agreement-checkboxes"] = "Vous devez acceptez les CGU";
         $error_input["error-detected"] = 1;
     }
     
-    if ($array["argent"] < 0){
+    if (isset($array["argent"]) && (!is_numeric($array["argent"]) || $array["argent"] < 0)){
         $error_input["argent"] = "Vous devez saisir une somme positive";
         $error_input["error-detected"] = 1;
     }
@@ -397,58 +467,204 @@ function generatedValidationEmail($len){
 }
 
 
-
-//////////////////
-
-function postsBets($sport) {
-    
-    $connexion = connect2DB();
-    $stmt = mysqli_prepare($connexion, "SELECT * FROM matchs WHERE sport = ? ORDER BY date_match DESC;");
-    mysqli_stmt_bind_param($stmt, 's', $sport);
-    mysqli_stmt_execute($stmt);
-    $res = mysqli_stmt_get_result($stmt);
-    $assoc = mysqli_fetch_all($res, MYSQLI_ASSOC);
-    mysqli_free_result($res);
-    mysqli_close($connexion);
-    return $assoc;
+function displayError($error, $cle){
+    if (isset($error[$cle]) && $error[$cle]){
+        echo "class='form-control form-error input-md' value='" . $_POST[$cle] . "'";
+    } else if (isset($error["error-detected"])){
+        echo "class='form-control input-md' value='" . $_POST[$cle] . "'"; 
+    } else {
+        echo "class='form-control input-md'"; 
+    }
 }
 
 
 
 
-function findBet($id) {
+
+
+
+
+
+
+
+
+
+
+
+
+function actualisePariMatch($pari, $choix){
+    $nb_choix = 3; //eq1 eq2 ou null
+    $n = 3; //facteur d'evolution
+    
+    
+    $id = $pari["id"];
+    
+    if ($choix == 1){
+        $coteini = $pari["coteEq1ini"];
+        $cleCote = "coteEq1";
+        $cleNbPari = "nbParieurEq1";
+    } else if ($choix == 2){
+        $coteini = $pari["coteEq2ini"];
+        $cleCote = "coteEq2";
+        $cleNbPari = "nbParieurEq2";
+    } else if ($choix == 3){
+        $cleCote = "coteNull";
+        $coteini = $pari["coteNullini"];
+        $cleNbPari = "nbParieurNull";
+    } else {
+        echo "error";
+        die();
+    }
+    
+    $nb_parieurs_choix = $pari[$cleNbPari] + 1; //plus le nouveau
+    
+    $nvCote = 1 + ( $coteini / ( $nb_choix * ( $nb_parieurs_choix / ($pari["nbparieurs"] + 1 ) ) )  );
     
     $connexion = connect2DB();
-    $stmt = mysqli_prepare($connexion, "SELECT * FROM matchs WHERE id= ? ;");
-    mysqli_stmt_bind_param($stmt, 'i', $id);
+    
+    if ($choix == 1){
+    $stmt = mysqli_prepare($connexion, "UPDATE Matchs SET coteEq1 = ?, nbParieurEq1 = nbParieurEq1 + 1, nbparieurs = nbparieurs + 1  WHERE id = ? ");
+        
+    } else if ($choix == 2){
+        $stmt = mysqli_prepare($connexion, "UPDATE Matchs SET coteEq2 = ?, nbParieurEq2 = nbParieurEq2 + 1, nbparieurs = nbparieurs + 1  WHERE id = ? ");
+    } else if ($choix == 3){
+        $stmt = mysqli_prepare($connexion, "UPDATE Matchs SET coteNull = ?, nbParieurNull = nbParieurNull+ 1, nbparieurs = nbparieurs + 1  WHERE id = ? ");
+    } else {
+    echo "error";
+    die();
+    }
+    
+    mysqli_stmt_bind_param($stmt, 'di', $nvCote, $id);
+    $success = mysqli_stmt_execute($stmt);
+
+    mysqli_close($connexion);
+}
+
+
+
+function ajoutPari($id_match, $id_joueur, $montant, $equipe, $cote){
+
+    $connexion = connect2DB();
+    $stmt = mysqli_prepare($connexion, "INSERT INTO Paris (idMatch, idParieur, montant, equipe, cote, datePari, gagne, fini) VALUES (?, ?, ?, ?, ?, NOW(), 0, 0)");
+    mysqli_stmt_bind_param($stmt, 'iidid', $id_match, $id_joueur, $montant, $equipe, $cote);
+    $success = mysqli_stmt_execute($stmt);
+    mysqli_close($connexion);
+    
+    return $success;
+}
+
+
+function decArgent($id_joueur, $montant){
+    $connexion = connect2DB();
+    $stmt = mysqli_prepare($connexion, "UPDATE Compte SET argent = argent - ? WHERE id = ?");
+    mysqli_stmt_bind_param($stmt, 'di', $montant, $id_joueur);
+    mysqli_stmt_execute($stmt);    
+    mysqli_close($connexion);
+}
+
+
+function annulationPari($id_pari){
+    $connexion = connect2DB();
+    $stmt = mysqli_prepare($connexion, "SELECT idParieur, montant FROM Paris WHERE idPari = ? ");
+    mysqli_stmt_bind_param($stmt, 'i', $id_pari);
+    mysqli_stmt_execute($stmt);
+    
+    $request = mysqli_stmt_get_result($stmt);
+    $pari = mysqli_fetch_assoc($request);
+    
+    $argent = $pari["montant"] * 0.5; //on rends que 50% de la somme pariée
+    echo"argent";
+    debug($argent);
+    
+    $stmt = mysqli_prepare($connexion, "UPDATE Compte  SET argent = argent + ? where id = ? ");
+    mysqli_stmt_bind_param($stmt, 'di', $argent, $pari["idParieur"]);
+    mysqli_stmt_execute($stmt);
+    
+    $stmt = mysqli_prepare($connexion, "DELETE FROM Paris WHERE idPari = ?");
+    mysqli_stmt_bind_param($stmt, 'i', $id_pari);
+    mysqli_stmt_execute($stmt);
+    
+    mysqli_close($connexion);
+    
+}
+
+function getIdPari($id_match, $id_joueur){
+    $connexion = connect2DB();
+    
+    $stmt = mysqli_prepare($connexion, "SELECT idPari FROM Paris WHERE idMatch = ? AND idParieur = ?;");
+    mysqli_stmt_bind_param($stmt, 'ii', $id_match, $id_joueur);
     mysqli_stmt_execute($stmt);
     $request = mysqli_stmt_get_result($stmt);
     $assoc = mysqli_fetch_assoc($request);
     
     mysqli_close($connexion);
-    return $assoc;
+    return $assoc['idPari'];
 }
 
+function pariFini($id_pari){
+    $connexion = connect2DB();
 
+    $stmt = mysqli_prepare($connexion, "SELECT fini FROM Paris WHERE idPari = ?");
+    mysqli_stmt_bind_param($stmt, 'i',$id_pari);
+    mysqli_stmt_execute($stmt);
+    
+    $request = mysqli_stmt_get_result($stmt);
+    $assoc = mysqli_fetch_assoc($request);
+    
+    mysqli_close($connexion);
+    
+    if (empty($assoc)){
+        $_SESSION["flash"]["danger"] = "pari inconnu";
+    } else {
+        if( $assoc["fini"] == 1){
+            return true;
+        } else {
+            return false;
+        }
+    }
+}
 
+function matchFini($id_match){
+    $connexion = connect2DB();
 
+    $stmt = mysqli_prepare($connexion, "SELECT fini FROM Matchs WHERE id = ?");
+    mysqli_stmt_bind_param($stmt, 'i',$id_match);
+    mysqli_stmt_execute($stmt);
+    
+    $request = mysqli_stmt_get_result($stmt);
+    $assoc = mysqli_fetch_assoc($request);
+    
+    mysqli_close($connexion);
+    
+    if (empty($assoc)){
+        $_SESSION["flash"]["danger"] = "match inconnu";
+    } else {
+        if( $assoc["fini"] == 1){
+            return true;
+        } else {
+            return false;
+        }
+    }
+}
 
+function getGagne($id_pari){
+    $connexion = connect2DB();
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    $stmt = mysqli_prepare($connexion, "SELECT idPari FROM Paris WHERE (idPari = ? AND fini = 1 AND gagne = 1 )");
+    mysqli_stmt_bind_param($stmt, 'i',$id_pari);
+    mysqli_stmt_execute($stmt);
+    
+    $request = mysqli_stmt_get_result($stmt);
+    $assoc = mysqli_fetch_assoc($request);
+    
+    mysqli_close($connexion);
+    
+    if (mysqli_num_rows($request) != 0){
+        return true;
+    } else {
+        return false;
+    }
+}
 
 
 ?>

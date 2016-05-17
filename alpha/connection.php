@@ -9,8 +9,10 @@ mySessionStart();
 
 $array = preventXSS($_POST);
 
+debug($array);
+
 if (isset($array['login']) && isset($array['pwd'])){
-    if (auth($array['login'], $array['pwd'])){
+    if (auth($array['login'], $array["pwd"])){
         
         $_SESSION["flash"]["success"] = "Connection reussi";
         header("Location:profil.php");

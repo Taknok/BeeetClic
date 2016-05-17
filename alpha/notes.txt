@@ -9,6 +9,7 @@ TO DO:
 - check que l'image envoyé est bien une image et pas un fichier exécutable php ou autre
 - check si email existe
 -check que le mot de passe fait au moin sx caracs avec maj min
+- check si l'envoie du mail a échoué
 
 PLUS TARTD:
 
