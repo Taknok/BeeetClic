@@ -1,0 +1,16 @@
+Vous trouverez dans ce dossier un fichier Site.sql qu’il vous faudra importer dans votre propre base de donnée. Elle contient 3 différentes table:
+
+“compte” regroupe toutes les donnée utilisateur (pseudo,nom,...)
+“matchs” catalogue les différents matchs proposés
+“paris” contient la table des paris fait par l’ensemble des utilisateurs.
+
+De plus, comme un mail de confirmation est envoyé lors de la création d’un compte, un serveur SMTP doit aussi être configuré. 
+
+le compte d'envoie est beeetclic@gmail.com avec un MDP : clicbeee
+
+Pour désactiver cette fonctionnalité il faut commenter les lignes du fichier inscription.php
+
+Cependant si vous voulez tester sur un compte déjà créé, vous pouvez utiliser:
+login: z
+passworld: u
+

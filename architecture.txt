@@ -1,0 +1,104 @@
+STRUCTURE GLOBAL DU SITE: 
+
+entete.php: génère la partie <head> necessaire au HTML. Inclusion des  différents fichiers css, de bootstrap, des icons et du javascript...
+
+header.php : présente le logo et nom du site. Gère aussie changement de background (gazon ou parquet) en fonction du sport.
+
+navbar.php: gère l’affichage intelligent du menu. Note: il est possible de se connecter/deconecter à partir du menu grâce au menu déroulant “Se connecter”
+
+start container.php : ouvre le container. celui ci est séparé par la suite en un bloc gauche et un sidebar.
+end_container.php: ferme le contaigner.
+
+start containe_leftr.php : ouvre le bloc principal de gauche
+end_container_left.php: ferme  le bloc principal de gauche
+
+sidebar.php: créer le sidebar et inclus les deux fichiers suivants:
+sidebar_social.php: génère les boutons vers facebook et autre. (liens désactivés)
+sidebar_historique: affiche au utilisateur connectés leur paris en cours et récemment terminé.
+
+footer.php : présente des liens utiles et introduit les créateurs du site. (Certain liens sont désactivés)
+
+begin.php: raccourci pour appeler les fichiers php du début
+end.php: raccourci pour appeler les fichiers php de fin
+
+
+
+
+
+PAGE D’ACCUEIL:
+ 
+carousel.php: gènere le carousel
+
+mention_legale.php:  gènere les mention legale
+
+organisation.php:  gènere la partie “nouveaux sur ce site ?”
+
+recommendation.php : gènere les avis utilisateurs
+
+
+Les fichiers javascripts et css sont des templates du site bootsnip que l'on a adapté.
+
+
+
+
+
+
+PARI:
+ 
+paris.php: affiche tout les paris suivant leur catégorie (du plus récent au plus vieux). Ne permet pas de parier directement mais renvois vers le “paris_details.php” associé.
+
+paris_details: 
+Genère la page présentant les infos du paris.
+Permet de miser sur la victoire de l’équipe 1 ou l’équipe 2 ainsin que match nul. 
+Possibilité d’annulation.
+Informe si le joueur est gagnant ou non. 
+indique que le paris est terminé le cas échéant.
+
+paris_details_processing.php: contient les fonctions spécifiques à paris_details.
+
+terminer_match.php: 
+Simule le résultat du match et met a jour les tables SQL. Si il est gagnant, l’argent est viré sur le compte du parieur. Si le paris est terminé  et vieux de plus de 10 minutes, il est supprime des tables.
+
+
+
+PROFIL:
+
+profil.php : affiche les infos de l’utilisateur et lui propose de changer son mail,son mot de passe, son nom et prénom via 3 formulaires distincts.
+
+change_profile.php : gère le changement de donnée utilisateur appelé dans profil.php.
+
+
+
+INSCRIPTION:
+
+inscription.php: 
+Page d’inscription. Vérifie que les informations sont valides (caractère alphanumérique pour les nom,prénom et pseudo / mail valides / mot de passe de plus de 6 charactères )  . Si les données saisies par l’utilisateur ne sont pas correctes, la raison de l'échec est affiché à l’utilisateur.
+Sinon un mail de confirmation est envoyé , contenant un lien  qui sert a valider définitivement  la création du compte. Remarque: un serveur mail doit etre configurer ! 
+(sinon connecté vous avec 
+
+valid_comptes.php: Le lien envoyé par mail renvois vers cette page. 
+
+
+
+CONNECTION:
+
+connection.php:
+Si l’utilisateur veux se connecter sans utiliser le menu déroulant, cette page lui permet de se connecter. Un lien vers l'inscrit ion est présent aussi.
+
+
+
+DECONNECTION:
+
+deconnection:php:
+détruit la session en cours et redirige vers la page d’accueil.
+
+AUTRE
+
+config.php: 
+configuration des variables globales pour la connections au serveur SQL
+
+fonction.php: contient de nombreuses fonctions. 
+
+
+
+Remarque : L’utilisateur est informer des actions effectué grâce a un bandeau de notification  ( exemple: déconnection reussit, échec de connection…)
